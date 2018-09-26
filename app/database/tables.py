@@ -16,36 +16,33 @@ queries = (
     """,
     """
     CREATE TABLE IF NOT EXISTS blacklist (
-    token_id INT NOT NULL,
-    tokens CHARACTER VARYING(200) NOT NULL
+        token_id INT NOT NULL,
+        tokens CHARACTER VARYING(200) NOT NULL
     )
     """,
     """
     CREATE TABLE IF NOT EXISTS orders (
-        order_id SERIAL PRIMARY KEY,
+        order_id SERIAL PRIMARY KEY NOT NULL,
         name VARCHAR(80) NOT NULL,
         quantity INT NOT NULL,
         price INT NOT NULL,
         date_created TIMESTAMP WITH TIME ZONE DEFAULT ('now'::text)::date NOT NULL,
-        status VARCHAR(80) DEFAULT 'New',
-        user_id INT NOT NULL REFERENCES users(user_id),
-        meal_id INT NOT NULL REFERENCES meals(meal_id)
+        status VARCHAR(80) DEFAULT 'New'
     )
     """,
     """
     CREATE TABLE IF NOT EXISTS meals (
-            meal_id SERIAL PRIMARY KEY,
-            name VARCHAR(80) NOT NULL,
-            description VARCHAR(200) NOT NULL,
-            price INT NOT NULL,
-            menu_id INT NOT NULL REFERENCES menu(menu_id)
+        meal_id SERIAL PRIMARY KEY NOT NULL,
+        name VARCHAR(80) NOT NULL,
+        description VARCHAR(200) NOT NULL,
+        price INT NOT NULL
     )
     """,
     """
     CREATE TABLE IF NOT EXISTS menu (
-            menu_id SERIAL PRIMARY KEY,
-            name VARCHAR(80) NOT NULL,
-            description VARCHAR(1000) NOT NULL
+        menu_id SERIAL PRIMARY KEY NOT NULL,
+        name VARCHAR(80) NOT NULL,
+        description VARCHAR(1000) NOT NULL
     )
     """
 )
@@ -56,17 +53,17 @@ def create_tables(db_url):
     Create tables for the database
     """
     try:
-        conn = psycopg2.connect(db_url)
+        connection = psycopg2.connect(db_url)
 
-        cur = conn.cursor()
+        cursor = connection.cursor()
         # create tables
         for command in queries:
-            cur.execute(command)
+            cursor.execute(command)
 
-        cur.close()
+        cursor.close()
 
-        conn.commit()
+        connection.commit()
 
-        conn.close()
+        connection.close()
     except psycopg2.DatabaseError as error:
         print(error)
