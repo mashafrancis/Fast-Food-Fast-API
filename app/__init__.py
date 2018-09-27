@@ -15,4 +15,7 @@ def create_app(config_name):
     with app.app_context():
         create_tables()
 
+    from app.api.v2.views.auth import auth as auth_blueprint
+    app.register_blueprint(auth_blueprint, url_prefix='/api/v2/')
+
     return app
