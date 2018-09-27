@@ -10,10 +10,9 @@ def create_app(config_name):
     app.config.from_object(app_config[config_name])
     app.config.from_pyfile('config.py')
     app_config[config_name].init_app(app)
+    CORS(app)
 
     with app.app_context():
         create_tables()
-
-    CORS(app)
 
     return app
