@@ -42,6 +42,17 @@ class OrdersView(MethodView):
         order.save()
         return Response.create_resource('Order has been added successfully.')
 
+    def delete(self):
+        """Endpoint for deleting all orders."""
+        try:
+            if Orders.find_one_entry():
+                raise OrderError.NotFound('No orders available!')
+            else:
+                Orders.delete_all()
+                return Response.complete_request('All orders have been successfully deleted!')
+        except OrderError.NotFound as e:
+            return e.message
+
 
 # Define API resource
 orders_view = OrdersView.as_view('orders_view')

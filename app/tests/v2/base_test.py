@@ -3,10 +3,11 @@ import os
 import sys  # Fix import errors
 import unittest
 
-from app.database.tables import drop_tables, test_dbconn
+import psycopg2
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
+from app.database.tables import drop_tables, create_tables
 from app import create_app
 
 
@@ -14,33 +15,36 @@ class BaseTests(unittest.TestCase):
     def setUp(self):
         self.app = create_app(config_name='testing')
         self.client = self.app.test_client
+        self.connection = psycopg2.connect(os.getenv('DATABASE_TEST_URL'))
+        self.cursor = self.connection.cursor()
+
         with self.app.app_context():
-            self.db = test_dbconn()
+            create_tables()
 
-        self.order = json.dumps({
-            'name': 'Burger',
-            'quantity': '10',
-            'price': '1000',
-            'created_by': 'Test'
-        })
+            self.order = json.dumps({
+                'name': 'Burger',
+                'quantity': '10',
+                'price': '1000',
+                'created_by': 'Test'
+            })
 
-        self.order2 = json.dumps({
-            'name': 'Burger-2',
-            'quantity': '20',
-            'price': '2000',
-            'created_by': 'Test',
-            'status': 'Accepted'
-        })
+            self.order2 = json.dumps({
+                'name': 'Burger-2',
+                'quantity': '20',
+                'price': '2000',
+                'created_by': 'Test',
+                'status': 'Accepted'
+            })
 
-        self.category = json.dumps({
-            'name': 'Drinks',
-            'description': 'Get your drinks!'
-        })
+            self.category = json.dumps({
+                'name': 'Drinks',
+                'description': 'Get your drinks!'
+            })
 
-        self.category2 = json.dumps({
-            'name': 'Drinks-2',
-            'description': 'Get your drinks-2!'
-        })
+            self.category2 = json.dumps({
+                'name': 'Drinks-2',
+                'description': 'Get your drinks-2!'
+            })
 
     def register_user(self, username, email, password, confirm_password):
         """Register user with dummy data"""

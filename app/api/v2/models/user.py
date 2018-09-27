@@ -5,15 +5,14 @@ from flask import current_app
 
 import app.api.common.responses as UserErrors
 
-from app.api.common.utils import Savable, Utils
+from app.api.common.utils import Utils
 from app.database.tables import dbconn
 
 
-class User(Savable):
+class User:
     collection = 'users'
 
     def __init__(self, username, email, password):
-        super().__init__()
         # self.user_id = self.find_by_id(email)
         self.username = username
         self.email = email

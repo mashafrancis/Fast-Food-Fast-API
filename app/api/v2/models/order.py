@@ -14,7 +14,7 @@ class Orders:
         self.status = 'Pending'
 
     def __repr__(self):
-        return f'<Order {self.name}'
+        return repr(self.name)
 
     def to_dict(self):
         return {
@@ -71,4 +71,24 @@ class Orders:
 
     @staticmethod
     def delete_all():
-        pass
+        connection = dbconn()
+        cursor = connection.cursor()
+
+        cursor.execute("""TRUNCATE TABLE orders""")
+
+        cursor.close()
+        connection.close()
+
+    @staticmethod
+    def find_one_entry():
+        connection = dbconn()
+        cursor = connection.cursor()
+
+        cursor.execute("""SELECT * FROM orders LIMIT 1""")
+
+        rows = cursor.fetchone()
+        cursor.close()
+        connection.close()
+
+        return rows
+

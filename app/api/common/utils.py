@@ -1,7 +1,7 @@
 import re
 import time
 
-from passlib.handlers.pbkdf2 import pbkdf2_sha512
+from werkzeug.security import generate_password_hash, check_password_hash
 
 
 class Utils:
@@ -32,7 +32,7 @@ class Utils:
         :param password: The sha512 password from the login/register form
         :return: A sha512 -> pbkdf2_sha512 encrypted password
         """
-        return pbkdf2_sha512.hash(password)
+        return generate_password_hash(password, method='pbkdf2:sha256', salt_length=8)
 
     @staticmethod
     def check_hashed_password(password, hashed_password):
@@ -43,4 +43,4 @@ class Utils:
         :param hashed_password: pbkdf2_sha512 encrypted password
         :return: True if passwords match, False otherwise
         """
-        return pbkdf2_sha512.verify(password, hashed_password)
+        return check_password_hash(hashed_password, password)
