@@ -7,18 +7,15 @@ import app.api.common.responses as UserErrors
 
 from app.api.common.utils import Utils
 from app.database.database import Database
-from ....database.database_connection import DatabaseConnection
 
 
 class User:
     collection = 'users'
 
     def __init__(self, username, email, password):
-        # self.user_id = self.find_by_id(email)
         self.username = username
         self.email = email
         self.password = Utils.hash_password(password)
-        # self.date_registered = datetime.now()
         if self.email == current_app.config['FAST_FOOD_ADMIN']:
             self.role = 'admin'
         else:
@@ -50,95 +47,32 @@ class User:
         pass
 
     @classmethod
-    def fetch_by_email(cls, email):
-        """
-        :param email:
-        :return: user with the given email
-        """
-        with DatabaseConnection() as connection:
-            cursor = connection.cursor()
-
-            cursor.execute("""SELECT * FROM users WHERE email = %(email)s""",
-                           {'email': email})
-
-            rows = cursor.fetchone()
-            cursor.close()
-            connection.close()
-        return rows
+    def find_by_email(cls, email):
+        """Method to search with user email"""
+        query = """SELECT * FROM users WHERE email = %(email)s"""
+        data = {'email': email}
+        return Database.find_one(query, data)
 
     @classmethod
     def get_password(cls, email):
-        """
-        Get the user's password using their email
-        :param email:
-        :return: user with the given email
-        """
-        with DatabaseConnection() as connection:
-            cursor = connection.cursor()
-
-            query = """SELECT password_hash FROM users WHERE email = %(email)s"""
-            cursor.execute(query, {'email': email})
-
-            password_hash = cursor.fetchone()
-            cursor.close()
-        return password_hash
+        """Method returns a user's password"""
+        query = """SELECT password_hash FROM users WHERE email = %(email)s"""
+        data = {'email': email}
+        return Database.find_one(query, data)
 
     @classmethod
     def get_user_id(cls, email):
-        """
-        Get the user's id using their email
-        :param email:
-        :return: username for the given id
-        """
-        with DatabaseConnection() as connection:
-            cursor = connection.cursor()
-            cursor.execute("SELECT id FROM users WHERE email = %(email)s",
-                           {'email': email})
-
-            user_id = cursor.fetchone()
-            cursor.close()
-        return user_id
-
-    @classmethod
-    def find_by_email(cls, email):
-        """
-        :param email:
-        :return: user with the given email
-        """
-        with DatabaseConnection() as connection:
-            cursor = connection.cursor()
-
-            cursor.execute("SELECT * FROM users WHERE email = %(email)s",
-                           {'email': email})
-
-            rows = cursor.fetchone()
-            cursor.close()
-        return rows is not None
-
-    @classmethod
-    def find_by_id(cls, email):
-        """
-        :param email:
-        :return: username for the given id
-        """
-        with DatabaseConnection() as connection:
-            cursor = connection.cursor()
-            cursor.execute("""SELECT id FROM users WHERE id = %(user_id)s""",
-                           {'email': email})
-            rows = cursor.fetchone()
-            user_id = rows[0]
-            cursor.close()
-        return user_id
+        """Method returns the user's id by querying the email"""
+        query = """SELECT id FROM users WHERE email = %(email)s"""
+        data = {'email': email}
+        return Database.find_one(query, data)
 
     @classmethod
     def find_by_username(cls, username):
-        with DatabaseConnection() as connection:
-            cursor = connection.cursor()
-            cursor.execute("SELECT * FROM users WHERE username = %(username)s",
-                           {'username': username})
-            rows = cursor.fetchone()
-            cursor.close()
-        return rows is not None
+        """Method returns the user's username"""
+        query = """SELECT * FROM users WHERE username = %(username)s"""
+        data = {'username': username}
+        return Database.find_one(query, data)
 
     @staticmethod
     def delete(user_id):
