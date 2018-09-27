@@ -18,4 +18,7 @@ def create_app(config_name):
     from app.api.v2.views.auth import auth as auth_blueprint
     app.register_blueprint(auth_blueprint, url_prefix='/api/v2/')
 
+    from app.api.v2.views.order import orders as orders_blueprint
+    app.register_blueprint(orders_blueprint, url_prefix='/api/v2/')
+
     return app

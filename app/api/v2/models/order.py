@@ -1,5 +1,7 @@
 from datetime import datetime
 
+from app.database.tables import dbconn
+
 
 class Orders:
     table = 'orders'
@@ -32,7 +34,16 @@ class Orders:
 
     @staticmethod
     def list_all_orders():
-        pass
+        connection = dbconn()
+        cursor = connection.cursor()
+
+        cursor.execute("""SELECT * FROM orders""")
+
+        orders = cursor.fetchall()
+        cursor.close()
+        connection.close()
+
+        return orders
 
     @classmethod
     def find_by_id(cls, order_id):
