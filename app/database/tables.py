@@ -20,6 +20,18 @@ def dbconn():
         return {'error': str(e)}
 
 
+def test_dbconn():
+    """
+    Connection to the database
+    :return: db connector
+    """
+    try:
+        connection = psycopg2.connect(current_app.config['DATABASE_TEST_URL'])
+        return connection
+    except psycopg2.DatabaseError as e:
+        return {'error': str(e)}
+
+
 def create_tables():
     """
     Create tables for the database

@@ -3,21 +3,19 @@ import os
 import sys  # Fix import errors
 import unittest
 
-from app.database.tables import drop_tables
+from app.database.tables import drop_tables, test_dbconn
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from app import create_app, create_tables
+from app import create_app
 
 
 class BaseTests(unittest.TestCase):
     def setUp(self):
         self.app = create_app(config_name='testing')
-        self.app_context = self.app.app_context()
-        self.app_context.push()
         self.client = self.app.test_client
-        with self.app_context:
-            create_tables()
+        with self.app.app_context():
+            self.db = test_dbconn()
 
         self.order = json.dumps({
             'name': 'Burger',

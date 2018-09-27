@@ -25,7 +25,7 @@ class User(Savable):
             self.role = 'user'
 
     def __repr__(self):
-        return f'<User {self.email}'
+        return '<User {}'.format(self.email)
 
     def to_dict(self):
         return {

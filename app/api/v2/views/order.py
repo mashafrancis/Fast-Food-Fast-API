@@ -29,6 +29,19 @@ class OrdersView(MethodView):
         except OrderError.NotFound as e:
             return e.message
 
+    def post(self):
+        """Endpoint for adding a new order."""
+        data = request.get_json(force=True)
+        name = data['name']
+        quantity = data['quantity']
+        price = data['price']
+
+        order = Orders(name=name,
+                       quantity=quantity,
+                       price=price)
+        order.save()
+        return Response.create_resource('Order has been added successfully.')
+
 
 # Define API resource
 orders_view = OrdersView.as_view('orders_view')

@@ -32,6 +32,22 @@ class Orders:
                        self.price)
         pass
 
+    def save(self):
+        connection = dbconn()
+        cursor = connection.cursor()
+
+        data = [self.name, self.quantity, self.price, 'now']
+        query = """INSERT INTO orders (name, quantity, price, date_created) 
+                    VALUES (%s, %s, %s, %s) RETURNING order_id"""
+        cursor.execute(query, data)
+
+        order_id = cursor.fetchone()[0]
+        cursor.close()
+        connection.commit()
+        connection.close()
+
+        return int(order_id)
+
     @staticmethod
     def list_all_orders():
         connection = dbconn()

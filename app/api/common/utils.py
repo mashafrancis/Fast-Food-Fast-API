@@ -1,7 +1,6 @@
 import re
 import time
 
-from abc import abstractmethod, ABCMeta
 from passlib.handlers.pbkdf2 import pbkdf2_sha512
 
 
@@ -45,29 +44,3 @@ class Utils:
         :return: True if passwords match, False otherwise
         """
         return pbkdf2_sha512.verify(password, hashed_password)
-
-
-class Savable(metaclass=ABCMeta):
-    def save_user(self):
-        collection = 'users'
-        Database.insert(collection, self.to_dict())
-
-    def save_order(self):
-        collection = 'orders'
-        Database.insert(collection, self.to_dict())
-
-    def save_blacklist(self):
-        collection = 'blacklist'
-        Database.insert(collection, self.to_dict())
-
-    def save_role(self):
-        collection = 'role'
-        Database.insert(collection, self.to_dict())
-
-    def save_category(self):
-        collection = 'category'
-        Database.insert(collection, self.to_dict())
-
-    @abstractmethod
-    def to_dict(self):
-        pass
