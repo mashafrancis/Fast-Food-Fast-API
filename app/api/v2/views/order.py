@@ -87,6 +87,19 @@ class OrderView(MethodView):
         except OrderError.NotFound as e:
             return e.message
 
+    def delete(self, order_id):
+        """Endpoint for deleting a particular order."""
+        order = Orders.find_by_id(order_id)
+        try:
+            if order:
+                Orders.delete(order_id)
+                response = "Order No {} has been deleted!".format(order_id)
+                return Response.complete_request(response)
+            else:
+                raise OrderError.NotFound("Order No {} does not exist!".format(order_id))
+        except OrderError.NotFound as e:
+            return e.message
+
 
 # Define API resource
 orders_view = OrdersView.as_view('orders_view')

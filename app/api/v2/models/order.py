@@ -91,7 +91,17 @@ class Orders:
 
     @staticmethod
     def delete(order_id):
-        pass
+        connection = dbconn()
+        cursor = connection.cursor()
+
+        cursor.execute("""DELETE FROM orders WHERE order_id = %(order_id)s""",
+                       {'order_id': order_id})
+
+        cursor.close()
+        connection.commit()
+        connection.close()
+
+        return True
 
     @staticmethod
     def delete_all():
