@@ -1,4 +1,7 @@
+from app.api.common.utils import Utils
 from app.database.database import Database
+
+import app.api.common.responses as MenuError
 
 
 class Menu:
@@ -34,6 +37,13 @@ class Menu:
         data = {'id': menu_id}
         return Database.find_one(query, data)
 
+    @classmethod
+    def find_by_name(cls, name):
+        """Method finds an order by it's menu_id"""
+        query = """SELECT * FROM menu WHERE name = %(name)s"""
+        data = {'name': name}
+        return Database.find_one(query, data)
+
     @staticmethod
     def delete(menu_id):
         """Method deletes a single menu by it's id"""
@@ -46,3 +56,22 @@ class Menu:
         """Method deletes all data from the menu table"""
         query = """TRUNCATE TABLE menu"""
         Database.remove_all(query)
+
+    @staticmethod
+    def validate_menu_details(name, description):
+        """
+        This method validates the menu input details
+        :param description:
+        :param name:
+        :return: True if valid, or False otherwise
+        """
+        if name and description:
+            if not Utils.name_checker(name):
+                raise MenuError.BadRequest('Invalid name!')
+
+        else:
+            if not name:
+                raise MenuError.BadRequest('Please provide name!')
+            if not description:
+                raise MenuError.BadRequest('Please provide some description!')
+        return True

@@ -21,6 +21,11 @@ class Utils:
         return True if username_checker else False
 
     @staticmethod
+    def name_checker(name):
+        name_checker = re.match(r"(?=^.{4,}$)(?=.*[a-z])^[A-Za-z0-9_-]+( +[A-Za-z0-9_-]+)*$", name)
+        return True if name_checker else False
+
+    @staticmethod
     def timestamp():
         """Return the current timestamp as an integer."""
         return int(time.time())
