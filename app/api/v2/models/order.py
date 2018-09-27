@@ -68,16 +68,12 @@ class Orders:
         cursor.execute("SELECT * FROM orders WHERE order_id = %(order_id)s",
                        {'order_id': order_id})
 
-        order = cursor.fetchall()[0]
-        info = {order[0]: {"name": order[1],
-                           "quantity": order[2],
-                           "price": order[3],
-                           "date_created": order[4],
-                           "status": order[5]}}
+        order = cursor.fetchone()
+
         cursor.close()
         connection.close()
 
-        return info
+        return order
 
     @staticmethod
     def delete(order_id):
