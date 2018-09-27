@@ -30,7 +30,7 @@ def create_tables():
             user_id SERIAL PRIMARY KEY NOT NULL,
             username VARCHAR(80) NOT NULL UNIQUE,
             email VARCHAR(80) NOT NULL UNIQUE,
-            password VARCHAR(255) NOT NULL,
+            password_hash VARCHAR(255) NOT NULL,
             date_registered TIMESTAMP WITH TIME ZONE DEFAULT ('now'::text)::date NOT NULL,
             user_role VARCHAR(80) DEFAULT 'User'
         )

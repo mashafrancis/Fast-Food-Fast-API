@@ -85,7 +85,7 @@ class User(Savable):
         cursor = connection.cursor()
 
         data = [self.username, self.email, self.password, 'now']
-        query = """INSERT INTO users (username, email, password, date_registered) 
+        query = """INSERT INTO users (username, email, password_hash, date_registered) 
                     VALUES (%s, %s, %s, %s) RETURNING user_id"""
         cursor.execute(query, data)
 
@@ -108,13 +108,50 @@ class User(Savable):
         """
         connection = dbconn()
         cursor = connection.cursor()
-        cursor.execute("SELECT * FROM users WHERE email = %(email)s",
+
+        cursor.execute("""SELECT * FROM users WHERE email = %(email)s""",
                        {'email': email})
+
         rows = cursor.fetchone()
         cursor.close()
         connection.close()
 
         return rows
+
+    @classmethod
+    def get_password(cls, email):
+        """
+        :param email:
+        :return: user with the given email
+        """
+        connection = dbconn()
+        cursor = connection.cursor()
+
+        query = """SELECT password_hash FROM users WHERE email = %(email)s"""
+        cursor.execute(query, {'email': email})
+
+        password_hash = cursor.fetchone()
+        cursor.close()
+        connection.close()
+
+        return password_hash
+
+    @classmethod
+    def get_user_id(cls, email):
+        """
+        :param email:
+        :return: username for the given id
+        """
+        connection = dbconn()
+        cursor = connection.cursor()
+        cursor.execute("SELECT user_id FROM users WHERE email = %(email)s",
+                       {'email': email})
+
+        user_id = cursor.fetchone()
+        cursor.close()
+        connection.close()
+
+        return user_id
 
     @classmethod
     def find_by_email(cls, email):
@@ -124,8 +161,10 @@ class User(Savable):
         """
         connection = dbconn()
         cursor = connection.cursor()
+
         cursor.execute("SELECT * FROM users WHERE email = %(email)s",
                        {'email': email})
+
         rows = cursor.fetchone()
         cursor.close()
         connection.close()
@@ -135,7 +174,7 @@ class User(Savable):
     @classmethod
     def find_by_id(cls, email):
         """
-        :param user_id:
+        :param email:
         :return: username for the given id
         """
         connection = dbconn()
@@ -151,14 +190,10 @@ class User(Savable):
 
     @classmethod
     def find_by_username(cls, username):
-        pass
-
-    @staticmethod
-    def check_user(username):
         connection = dbconn()
         cursor = connection.cursor()
-        query = "SELECT username FROM users WHERE username = %(username)s", {'username': username}
-        cursor.execute(query)
+        cursor.execute("SELECT * FROM users WHERE username = %(username)s",
+                       {'username': username})
         rows = cursor.fetchone()
         cursor.close()
         connection.close()
