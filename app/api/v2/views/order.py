@@ -45,7 +45,7 @@ class OrdersView(MethodView):
     def delete(self):
         """Endpoint for deleting all orders."""
         try:
-            if Orders.find_one_entry():
+            if not Orders.find_one_entry():
                 raise OrderError.NotFound('No orders available!')
             else:
                 Orders.delete_all()
@@ -69,6 +69,21 @@ class OrderView(MethodView):
                                "date_created": order[4],
                                "status": order[5]}}
             return Response.complete_request(data)
+        except OrderError.NotFound as e:
+            return e.message
+
+    def put(self, order_id):
+        """Endpoint for updating a particular order."""
+        order = Orders.find_by_id(order_id)
+        data = request.get_json(force=True)
+        try:
+            if not order:
+                raise OrderError.NotFound("Sorry, Order No {} doesn't exist yet! Create one.".format(order_id))
+            else:
+                status = data['status']
+
+                Orders.update_order(order_id, status)
+                return jsonify({'order': 'Updated'}, 200)
         except OrderError.NotFound as e:
             return e.message
 

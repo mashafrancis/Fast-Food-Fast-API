@@ -178,7 +178,7 @@ class User:
         """
         connection = dbconn()
         cursor = connection.cursor()
-        cursor.execute("SELECT user_id FROM users WHERE user_id = %(user_id)s",
+        cursor.execute("""SELECT user_id FROM users WHERE user_id = %(user_id)s""",
                        {'email': email})
         rows = cursor.fetchone()
         user_id = rows[0]

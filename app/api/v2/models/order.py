@@ -65,7 +65,7 @@ class Orders:
     def find_by_id(cls, order_id):
         connection = dbconn()
         cursor = connection.cursor()
-        cursor.execute("SELECT * FROM orders WHERE order_id = %(order_id)s",
+        cursor.execute("""SELECT * FROM orders WHERE order_id = %(order_id)s""",
                        {'order_id': order_id})
 
         order = cursor.fetchone()
@@ -74,6 +74,20 @@ class Orders:
         connection.close()
 
         return order
+
+    @staticmethod
+    def update_order(order_id, status):
+        connection = dbconn()
+        cursor = connection.cursor()
+
+        cursor.execute("""UPDATE orders SET status = %(status)s WHERE order_id = %(order_id)s""",
+                       {'order_id': order_id, 'status': status})
+
+        cursor.close()
+        connection.commit()
+        connection.close()
+
+        return True
 
     @staticmethod
     def delete(order_id):
@@ -87,6 +101,7 @@ class Orders:
         cursor.execute("""TRUNCATE TABLE orders""")
 
         cursor.close()
+        connection.commit()
         connection.close()
 
     @staticmethod
