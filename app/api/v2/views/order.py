@@ -1,5 +1,3 @@
-import datetime
-
 from flask import request, jsonify, Blueprint
 from flask.views import MethodView
 
@@ -63,11 +61,7 @@ class OrderView(MethodView):
             order = Orders.find_by_id(order_id)
             if not order:
                 raise OrderError.NotFound("Sorry, Order No {} does't exist!".format(order_id))
-            data = {order[0]: {"name": order[1],
-                               "quantity": order[2],
-                               "price": order[3],
-                               "date_created": order[4],
-                               "status": order[5]}}
+            data = Response.define_orders(order)
             return Response.complete_request(data)
         except OrderError.NotFound as e:
             return e.message

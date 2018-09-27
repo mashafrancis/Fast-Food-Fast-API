@@ -1,21 +1,63 @@
+from app.database.database_connection import DatabaseConnection
+
+
 class Database:
 
-    @classmethod
-    def insert(cls, table, data):
-        pass
+    @staticmethod
+    def insert(query, data):
+        with DatabaseConnection() as connection:
+            cursor = connection.cursor()
+            cursor.execute(query, data)
+            row = cursor.fetchone()[0]
+            cursor.close()
+        return int(row)
 
-    @classmethod
-    def remove_all(cls, table):
-        pass
+    @staticmethod
+    def remove_all(query):
+        with DatabaseConnection() as connection:
+            cursor = connection.cursor()
+            cursor.execute(query)
+            cursor.close()
 
-    @classmethod
-    def remove_one(cls, table, query):
-        pass
+    @staticmethod
+    def remove_one(query, data):
+        with DatabaseConnection() as connection:
+            cursor = connection.cursor()
+            cursor.execute(query, data)
+            cursor.close()
+        return True
 
-    @classmethod
-    def find_one(cls, table, query):
-        pass
+    @staticmethod
+    def find_one(query, data):
+        with DatabaseConnection() as connection:
+            cursor = connection.cursor()
+            cursor.execute(query, data)
+            row = cursor.fetchone()
+            cursor.close()
+        return row
 
-    @classmethod
-    def find_all(cls, table):
-        pass
+    @staticmethod
+    def find_all(query):
+        with DatabaseConnection() as connection:
+            cursor = connection.cursor()
+            cursor.execute(query)
+            rows = cursor.fetchall()
+            cursor.close()
+        return rows
+
+    @staticmethod
+    def update(query, data):
+        with DatabaseConnection() as connection:
+            cursor = connection.cursor()
+            cursor.execute(query, data)
+            cursor.close()
+        return True
+
+    @staticmethod
+    def check_entry(query):
+        with DatabaseConnection() as connection:
+            cursor = connection.cursor()
+            cursor.execute(query)
+            rows = cursor.fetchone()
+            cursor.close()
+        return rows

@@ -1,11 +1,9 @@
 from datetime import datetime
 
-from app.database.tables import dbconn
+from app.database.database import Database
 
 
 class Orders:
-    table = 'orders'
-
     def __init__(self, name, quantity, price):
         self.name = name
         self.quantity = quantity
@@ -25,105 +23,48 @@ class Orders:
             'status': self.status
         }
 
-    def add_order(self):
-        """Adds user to the list"""
-        order = Orders(self.name,
-                       self.quantity,
-                       self.price)
-        pass
-
     def save(self):
-        connection = dbconn()
-        cursor = connection.cursor()
-
+        """Method saves an order to the table"""
         data = [self.name, self.quantity, self.price, 'now']
         query = """INSERT INTO orders (name, quantity, price, date_created) 
-                    VALUES (%s, %s, %s, %s) RETURNING order_id"""
-        cursor.execute(query, data)
-
-        order_id = cursor.fetchone()[0]
-        cursor.close()
-        connection.commit()
-        connection.close()
-
-        return int(order_id)
+                                VALUES (%s, %s, %s, %s) RETURNING id"""
+        Database.insert(query, data)
 
     @staticmethod
     def list_all_orders():
-        connection = dbconn()
-        cursor = connection.cursor()
-
-        cursor.execute("""SELECT * FROM orders""")
-
-        orders = cursor.fetchall()
-        cursor.close()
-        connection.close()
-
-        return orders
-
-    @classmethod
-    def find_by_id(cls, order_id):
-        connection = dbconn()
-        cursor = connection.cursor()
-        cursor.execute("""SELECT * FROM orders WHERE order_id = %(order_id)s""",
-                       {'order_id': order_id})
-
-        order = cursor.fetchone()
-
-        cursor.close()
-        connection.close()
-
-        return order
+        """Method lists all available orders in a table"""
+        query = """SELECT * FROM orders"""
+        return Database.find_all(query)
 
     @staticmethod
     def update_order(order_id, status):
-        connection = dbconn()
-        cursor = connection.cursor()
-
-        cursor.execute("""UPDATE orders SET status = %(status)s WHERE order_id = %(order_id)s""",
-                       {'order_id': order_id, 'status': status})
-
-        cursor.close()
-        connection.commit()
-        connection.close()
-
-        return True
+        """Methods updates the status of an order"""
+        query = """UPDATE orders SET status = %(data)s WHERE id = %(id)s"""
+        data = {'id': order_id, 'data': status}
+        return Database.update(query, data)
 
     @staticmethod
     def delete(order_id):
-        connection = dbconn()
-        cursor = connection.cursor()
-
-        cursor.execute("""DELETE FROM orders WHERE order_id = %(order_id)s""",
-                       {'order_id': order_id})
-
-        cursor.close()
-        connection.commit()
-        connection.close()
-
-        return True
+        """Method deletes a single order by it's id"""
+        query = """DELETE FROM orders WHERE id = %(id)s"""
+        data = {'id': order_id}
+        return Database.remove_one(query, data)
 
     @staticmethod
     def delete_all():
-        connection = dbconn()
-        cursor = connection.cursor()
-
-        cursor.execute("""TRUNCATE TABLE orders""")
-
-        cursor.close()
-        connection.commit()
-        connection.close()
+        """Method deletes all data from a table"""
+        query = """TRUNCATE TABLE orders"""
+        Database.remove_all(query)
 
     @staticmethod
     def find_one_entry():
-        connection = dbconn()
-        cursor = connection.cursor()
+        """Method finds if one entry exists"""
+        query = """SELECT * FROM orders LIMIT 1"""
+        return Database.check_entry(query)
 
-        cursor.execute("""SELECT * FROM orders LIMIT 1""")
-
-        rows = cursor.fetchone()
-        cursor.close()
-        connection.close()
-
-        return rows
-
+    @staticmethod
+    def find_by_id(order_id):
+        """Method finds an order by it's order_id"""
+        query = """SELECT * FROM orders WHERE id = %(id)s"""
+        data = {'id': order_id}
+        return Database.find_one(query, data)

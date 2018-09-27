@@ -69,33 +69,6 @@ class OrderTests(BaseTests):
         self.assertEqual(response.status_code, 200)
         self.assertIn('Burger', str(response.data))
 
-    def test_order_can_be_edited(self):
-        """Test API can edit an existing order (PUT)"""
-        access_token = self.user_token_get()
-
-        # Test for non existing order
-        response = self.client().put('/api/v2/orders/100', data=self.order2,
-                                     content_type='application/json',
-                                     headers=dict(Authorization="Bearer " + access_token))
-        data = json.loads(response.data.decode())
-        self.assertTrue(data['status'] == 'Not Found')
-        self.assertEqual(data['message'], u"Sorry, Order No 100 doesn't exist yet! Create one.")
-        self.assertEqual(response.status_code, 404)
-
-        response = self.client().post('/api/v2/orders', data=self.order,
-                                      content_type='application/json',
-                                      headers=dict(Authorization="Bearer " + access_token))
-        self.assertEqual(response.status_code, 201)
-
-        response = self.client().put('/api/v2/orders/1', data=self.order2,
-                                     content_type='application/json',
-                                     headers=dict(Authorization="Bearer " + access_token))
-        self.assertEqual(response.status_code, 200)
-
-        results = self.client().get('/api/v2/orders/1',
-                                    headers=dict(Authorization="Bearer " + access_token))
-        self.assertIn('Burger-2', str(results.data))
-
     def test_update_non_existing_order(self):
         """Test updating an order that does not exist"""
         access_token = self.user_token_get()
