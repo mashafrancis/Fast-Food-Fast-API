@@ -44,7 +44,7 @@ class MenuView(MethodView):
                     results.append(obj)
                 return Response.complete_request(results)
             else:
-                raise MenuError.NotFound('Sorry, No Category found! Create one.')
+                raise MenuError.NotFound('Sorry, No Menu found! Create one.')
         except MenuError.NotFound as e:
             return e.message
 
