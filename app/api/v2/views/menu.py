@@ -33,6 +33,21 @@ class MenuView(MethodView):
         except MenuError.BadRequest as e:
             return e.message
 
+    def get(self):
+        """Endpoint for fetching all orders."""
+        results = []
+        all_menu = Menu.list_all_menu()
+        try:
+            if all_menu:
+                for _menu in all_menu:
+                    obj = Response.define_menu(_menu)
+                    results.append(obj)
+                return Response.complete_request(results)
+            else:
+                raise MenuError.NotFound('Sorry, No Category found! Create one.')
+        except MenuError.NotFound as e:
+            return e.message
+
 
 # Define API resource
 menu_view = MenuView.as_view('menu_view')

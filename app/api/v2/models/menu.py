@@ -25,7 +25,7 @@ class Menu:
         return Database.insert(query, data)
 
     @staticmethod
-    def list_all_categories():
+    def list_all_menu():
         """Method lists all available menu in a table"""
         query = """SELECT * FROM menu"""
         return Database.find_all(query)

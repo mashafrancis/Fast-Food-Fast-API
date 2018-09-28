@@ -28,14 +28,10 @@ class Response:
         return obj
 
     @staticmethod
-    def define_category(category):
+    def define_menu(menu):
         """Return a dictionary of the orders object"""
-        obj = {
-            'category_id': category['category_id'],
-            'name': category['name'],
-            'description': category['description'],
-            'date_created': category['date_created']
-        }
+        obj = {menu[0]: {"name": menu[1],
+                         "description": menu[2], }}
         return obj
 
     @staticmethod
