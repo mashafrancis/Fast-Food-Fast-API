@@ -58,6 +58,12 @@ class Menu:
         Database.remove_all(query)
 
     @staticmethod
+    def find_one_entry():
+        """Method finds if one entry exists"""
+        query = """SELECT * FROM menu LIMIT 1"""
+        return Database.check_entry(query)
+
+    @staticmethod
     def validate_menu_details(name, description):
         """
         This method validates the menu input details

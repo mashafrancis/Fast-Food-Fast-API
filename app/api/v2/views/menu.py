@@ -48,6 +48,17 @@ class MenuView(MethodView):
         except MenuError.NotFound as e:
             return e.message
 
+    def delete(self):
+        """Endpoint for deleting all orders."""
+        try:
+            if not Menu.find_one_entry():
+                raise MenuError.NotFound('There is no menu here!')
+            else:
+                Menu.delete_all()
+                return Response.complete_request('All menu has been successfully deleted!')
+        except MenuError.NotFound as e:
+            return e.message
+
 
 # Define API resource
 menu_view = MenuView.as_view('menu_view')

@@ -46,7 +46,7 @@ class MenuTests(BaseTests):
                                       content_type='application/json',
                                       headers=dict(Authorization="Bearer " + access_token))
         self.assertEqual(response.status_code, 201)
-        response = self.client().get('/api/v2/category',
+        response = self.client().get('/api/v2/menu',
                                      headers=dict(Authorization="Bearer " + access_token))
         self.assertEqual(response.status_code, 200)
 
