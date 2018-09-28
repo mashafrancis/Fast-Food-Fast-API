@@ -1,12 +1,10 @@
 from datetime import datetime
 
-from app.data import Database
-from app.api.v1.common.utils import Savable
+from app.database.database import Database
 
 
-class BlackList(Savable):
+class BlackList:
     """Creates a model to handle token blacklist"""
-    collection = 'blacklist'
 
     def __init__(self, token):
         self.token = token
@@ -22,15 +20,15 @@ class BlackList(Savable):
         }
 
     def save(self):
-        blacklist = BlackList(self.token)
-        blacklist.save_blacklist()
-        return self.to_dict()
+        data = [self.token]
+        query = """INSERT INTO blacklist (tokens) VALUES (%s) RETURNING id"""
+        return Database.insert(query, data)
 
     @staticmethod
-    def check_token(token):
+    def check_token(tokens):
         """Check if token exists"""
-        finder = (lambda x: x['token'] == token)
-        response = Database.find_one(BlackList.collection, finder)
+        query = """SELECT * FROM blacklist WHERE tokens = (tokens)"""
+        response = Database.check_entry(query)
         if response:
             return True
         else:

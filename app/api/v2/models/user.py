@@ -10,7 +10,6 @@ from app.database.database import Database
 
 
 class User:
-    collection = 'users'
 
     def __init__(self, username, email, password):
         self.username = username
@@ -72,6 +71,20 @@ class User:
         """Method returns the user's username"""
         query = """SELECT * FROM users WHERE username = %(username)s"""
         data = {'username': username}
+        return Database.find_one(query, data)
+
+    @classmethod
+    def find_by_id(cls, user_id):
+        """Method to return user's id"""
+        query = """SELECT * FROM users WHERE id = %(id)s"""
+        data = {'id': user_id}
+        return Database.find_one(query, data)
+
+    @classmethod
+    def find_by_role(cls, email):
+        """Method to return the user's role"""
+        query = """SELECT * FROM users WHERE user_role = %(user_role)s"""
+        data = {'email': email}
         return Database.find_one(query, data)
 
     @staticmethod

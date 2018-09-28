@@ -1,4 +1,4 @@
-from app.database.database_connection import DatabaseConnection
+from .database_connection import DatabaseConnection
 
 
 class Database:

@@ -2,6 +2,7 @@ from flask import request, jsonify, Blueprint
 from flask.views import MethodView
 
 import app.api.common.responses as OrderError
+from app.api.common.decorators import user_required
 
 from app.api.v2.models.order import Orders
 from app.api.common.responses import Response
@@ -12,6 +13,7 @@ orders = Blueprint('order', __name__)
 class OrdersView(MethodView):
     """Contains GET and POST methods"""
 
+    # @user_required
     def get(self):
         """Endpoint for fetching all orders."""
         results = []
