@@ -15,7 +15,7 @@ class BaseTests(unittest.TestCase):
     def setUp(self):
         self.app = create_app(config_name='testing')
         self.client = self.app.test_client
-        self.connection = psycopg2.connect(os.getenv('DATABASE_TEST_URL'))
+        self.connection = psycopg2.connect("host=localhost dbname=test_andela user=francis password=bhakita")
         self.cursor = self.connection.cursor()
 
         with self.app.app_context():
