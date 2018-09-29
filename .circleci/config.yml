@@ -14,11 +14,11 @@ jobs:
           TEST_DATABASE_URL: postgresql://postgres@localhost/test_db
       - image: circleci/postgres:9.6.5-alpine-ram
         environment:
-          CC_TEST_REPORTER_ID: ${CC_TEST_REPORTER_ID}
-          SECRET_KEY: "********"
-          POSTGRES_USER: postgres
+          CC_TEST_REPORTER_ID: ${44b8eba4e4c95aee8c38e745814c0465ed3d8c76da6f6a8f4e3115778d23f73f}
+          SECRET_KEY: "\xbb\xd4\xfet\xcd\x95\xa5)z\xaa 4<P#\xe3\xc1\xf4BZ\xc9\xb8\r1\x7f\xee\xd2\xc8\xf4\x82"
+          POSTGRES_USER: testuser
           POSTGRES_DB: test_db
-          POSTGRES_PASSWORD:
+          POSTGRES_PASSWORD: testuser
 
       # Specify service dependencies here if necessary
       # CircleCI maintains a library of pre-built images
@@ -47,12 +47,12 @@ jobs:
           name: install dependencies
           command: |
             python3 -m venv venv
-            .venv/bin/activate
+            . venv/bin/activate
             pip install -r requirements.txt
 
       - save_cache:
           paths:
-            - ./venv
+            - . /venv
           key: v1-dependencies-{{ checksum "requirements.txt" }}
 
       # run tests!
@@ -63,7 +63,7 @@ jobs:
       - run:
           name: run tests
           command: |
-            .venv/bin/activate
+            . venv/bin/activate
             pytest
 
       - run:
