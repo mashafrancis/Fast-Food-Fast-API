@@ -1,0 +1,27 @@
+## configuration to be excluded...
+version: "2"
+exclude_patterns:
+- "tests/"
+- "spec/"
+- "**/vendor/"
+- "swagger_ui/"
+- "UI/"
+- "config/"
+- "db/"
+- "dist/"
+- "features/"
+- "script/"
+- "**/spec/"
+- "**/test/"
+- "**/tests/"
+- "Tests/"
+- "**/vendor/"
+- "**/*_test.go"
+- "**/*.d.ts"
+- "app/api/common/decorators.py"
+- "app/api/common/responses.py"
+- "app/database/database.py"
+
+plugins:
+  pep8:
+    enabled: true

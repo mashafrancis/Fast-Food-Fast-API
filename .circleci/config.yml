@@ -1,0 +1,77 @@
+# Python CircleCI 2.0 configuration file
+#
+# Check https://circleci.com/docs/2.0/language-python/ for more details
+#
+version: 2
+jobs:
+  build:
+    docker:
+      # specify the version you desire here
+      # use `-browsers` prefix for selenium tests, e.g. `3.6.1-browsers`
+      - image: circleci/python:3.6.4
+        environment:
+          APP_SETTING: testing
+          TEST_DATABASE_URL: postgresql://postgres@localhost/test_db
+      - image: circleci/postgres:9.6.5-alpine-ram
+        environment:
+          CC_TEST_REPORTER_ID: ${44b8eba4e4c95aee8c38e745814c0465ed3d8c76da6f6a8f4e3115778d23f73f}
+          SECRET_KEY: "\xbb\xd4\xfet\xcd\x95\xa5)z\xaa 4<P#\xe3\xc1\xf4BZ\xc9\xb8\r1\x7f\xee\xd2\xc8\xf4\x82"
+          POSTGRES_USER: testuser
+          POSTGRES_DB: test_db
+          POSTGRES_PASSWORD: testuser
+
+      # Specify service dependencies here if necessary
+      # CircleCI maintains a library of pre-built images
+      # documented at https://circleci.com/docs/2.0/circleci-images/
+      # - image: circleci/postgres:9.4
+
+    working_directory: ~/repo
+
+    steps:
+      - checkout
+
+      # Download and cache dependencies
+      - restore_cache:
+          keys:
+          - v1-dependencies-{{ checksum "requirements.txt" }}
+          # fallback to using the latest cache if no exact match is found
+          - v1-dependencies-
+
+      - run:
+          name: Setup code climate test-reporter
+          command: |
+            curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+            chmod +x ./cc-test-reporter
+
+      - run:
+          name: install dependencies
+          command: |
+            python3 -m venv venv
+            . venv/bin/activate
+            pip install -r requirements.txt
+
+      - save_cache:
+          paths:
+            - . /venv
+          key: v1-dependencies-{{ checksum "requirements.txt" }}
+
+      # run tests!
+      # this example uses Django's built-in test-runner
+      # other common Python testing frameworks include pytest and nose
+      # https://pytest.org
+      # https://nose.readthedocs.io
+      - run:
+          name: run tests
+          command: |
+            . venv/bin/activate
+            pytest
+
+      - run:
+          name: upload test coverage to codeclimate
+          command: |
+            ./cc-test-reporter format-coverage -o ./.coverage -t coverage.py
+            ./cc-test-reporter upload-coverage -i .coverage
+
+      - store_artifacts:
+          path: test-reports
+          destination: test-reports

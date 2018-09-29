@@ -1,0 +1,35 @@
+env:
+  global:
+    - CC_TEST_REPORTER_ID=44b8eba4e4c95aee8c38e745814c0465ed3d8c76da6f6a8f4e3115778d23f73f
+
+language: python
+
+python:
+  - "3.6.4"
+
+install:
+  - pip install -r requirements.txt
+  - pip install coveralls
+
+services:
+  - postgresql
+
+before_script:
+  - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+  - chmod +x ./cc-test-reporter
+  - ./cc-test-reporter before-build
+  - source ./.travis.sh
+  - psql -c "create role testuser with superuser login password 'testuser';" -U postgres
+  - psql -c 'create database test_andela;' -U postgres
+  - psql -c 'alter database test_andela owner to testuser' -U postgres
+
+script:
+  - coverage run -m pytest -v
+  - coverage report
+
+after_success:
+  - coveralls
+  - ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT
+
+notifications:
+  email: false
