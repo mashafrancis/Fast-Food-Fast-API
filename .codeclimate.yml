@@ -21,3 +21,7 @@ exclude_patterns:
 - "app/api/common/decorators.py"
 - "app/api/common/responses.py"
 - "app/database/database.py"
+
+plugins:
+  pep8:
+    enabled: true
