@@ -170,6 +170,15 @@ class AuthTest(BaseTests):
             self.assertTrue(data['status'] == 'Unauthorized')
             self.assertTrue(data['message'] == 'Your email is invalid! Kindly recheck your email.')
 
+    def test_user_logout(self):
+        """Test a user can logout through the POST request"""
+        with self.client():
+            access_token = self.user_token_get()
+            logout = self.user_logout(access_token)
+            self.assertTrue(logout.status_code, 200)
+            logout_again = self.user_logout(access_token)
+            self.assertTrue(logout_again.status_code, 401)
+
 
 if __name__ == '__main__':
     unittest.main()
