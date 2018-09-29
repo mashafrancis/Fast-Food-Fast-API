@@ -1,3 +1,7 @@
+env:
+  global:
+    - CC_TEST_REPORTER_ID=44b8eba4e4c95aee8c38e745814c0465ed3d8c76da6f6a8f4e3115778d23f73f
+
 language: python
 
 python:
@@ -22,7 +26,6 @@ before_script:
 script:
   - coverage run -m pytest -v
   - coverage report
-  - bundle exec rspec
 
 after_success:
   - coveralls
