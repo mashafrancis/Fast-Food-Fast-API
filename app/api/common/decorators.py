@@ -2,7 +2,6 @@ from functools import wraps
 
 from flask import request, make_response, jsonify
 
-from app.api.v2.models.blacklist import BlackList
 from app.api.v2.models.user import User
 
 
