@@ -17,7 +17,8 @@ before_script:
   - psql -c 'alter database test_andela owner to testuser' -U postgres
 
 script:
-  - nosetests --with-coverage --cover-package=app app/tests
+  - coverage run -m pytest -v
+  - coverage report
 
 after_success:
   - coveralls

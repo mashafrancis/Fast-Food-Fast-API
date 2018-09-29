@@ -1,4 +1,4 @@
-from flask import request, Blueprint, jsonify, make_response
+from flask import request, Blueprint
 from flask.views import MethodView
 
 import app.api.common.responses as UserErrors
@@ -22,12 +22,12 @@ class RegistrationView(MethodView):
         confirm_password = data['confirm_password']
         try:
             User.validate_register_details(email, username, password, confirm_password)
-            user = User.find_by_email(email)
+            user = User.fetch_email(email)
             if not user:
                 user = User(username=username, email=email, password=password)
-                user_id = user.save()
+                user_email = user.save()
                 # generate access_token for user
-                access_token = user.generate_token(user_id)
+                access_token = user.generate_token(user_email)
                 return AuthResponse().create_user(
                     'User {} successfully registered.'.format(user.email), access_token.decode())
             raise UserErrors.Conflict('User already exists! Please login.')
@@ -52,15 +52,15 @@ class LoginView(MethodView):
             if not Utils.email_is_valid(email):
                 raise UserErrors.Unauthorized('Your email is invalid! Kindly recheck your email.')
 
-            user = User.find_by_email(email)
-            user_id = User.get_user_id(email)
+            user = User.fetch_email(email)
+            user_role = User.fetch_role(email)
             if not user:
                 raise UserErrors.NotFound('User does not exist. Kindly register!')
             else:
                 if email and password:
-                    password_hash = User.get_password(email)[0]
+                    password_hash = User.fetch_password(email)[0]
                     if Utils.check_hashed_password(password, password_hash):
-                        access_token = User.generate_token(user_id)
+                        access_token = User.generate_token(user_role)
                         if access_token:
                             return AuthResponse.complete_request(
                                 'You have logged in successfully!', access_token.decode())

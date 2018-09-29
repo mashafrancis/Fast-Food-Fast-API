@@ -10,7 +10,7 @@ class Database:
             cursor.execute(query, data)
             row = cursor.fetchone()[0]
             cursor.close()
-        return int(row)
+        return row
 
     @staticmethod
     def remove_all(query):

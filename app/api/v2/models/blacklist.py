@@ -20,16 +20,16 @@ class BlackList:
         }
 
     def save(self):
-        data = [self.token]
-        query = """INSERT INTO blacklist (tokens) VALUES (%s) RETURNING id"""
+        data = [self.token, 'now']
+        query = """INSERT INTO blacklist (tokens, blacklisted_date) 
+                                VALUES (%s, %s) RETURNING id"""
         return Database.insert(query, data)
 
-    @staticmethod
-    def check_token(tokens):
+    def check_token(self):
         """Check if token exists"""
-        query = """SELECT * FROM blacklist WHERE tokens = (tokens)"""
-        response = Database.check_entry(query)
+        data = [self.token]
+        query = """SELECT tokens::int FROM blacklist"""
+        response = Database.find_one(query, data)
         if response:
             return True
-        else:
-            return False
+        return False

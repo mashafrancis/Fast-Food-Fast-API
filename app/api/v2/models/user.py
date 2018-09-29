@@ -36,73 +36,78 @@ class User:
         Save a new user to the database
         :return: user_id
         """
-        data = [self.username, self.email, self.password, 'now']
-        query = """INSERT INTO users (username, email, password_hash, date_registered) 
-                    VALUES (%s, %s, %s, %s) RETURNING id"""
+        data = [self.username, self.email, self.password, 'now', self.role]
+        query = """INSERT INTO users (username, email, password_hash, date_registered, user_role) 
+                    VALUES (%s, %s, %s, %s, %s) RETURNING email"""
         Database.insert(query, data)
 
     @staticmethod
     def list_all_users():
         pass
 
-    @classmethod
-    def find_by_email(cls, email):
+    @staticmethod
+    def fetch_email(email):
         """Method to search with user email"""
-        query = """SELECT * FROM users WHERE email = %(email)s"""
-        data = {'email': email}
+        query = """SELECT email::varchar(255) FROM users"""
+        data = (email,)
         return Database.find_one(query, data)
 
-    @classmethod
-    def get_password(cls, email):
+    @staticmethod
+    def fetch_password(email):
         """Method returns a user's password"""
         query = """SELECT password_hash FROM users WHERE email = %(email)s"""
         data = {'email': email}
         return Database.find_one(query, data)
 
-    @classmethod
-    def get_user_id(cls, email):
+    @staticmethod
+    def fetch_user_id(email):
         """Method returns the user's id by querying the email"""
         query = """SELECT id FROM users WHERE email = %(email)s"""
         data = {'email': email}
         return Database.find_one(query, data)
 
-    @classmethod
-    def find_by_username(cls, username):
+    @staticmethod
+    def fetch_role(email):
+        """Method to return the user's role"""
+        query = """SELECT user_role::varchar(80) FROM users"""
+        data = (email,)
+        # query = """SELECT user_role FROM users WHERE email = %s"""
+        # data = (email,)
+        return Database.find_one(query, data)
+
+    @staticmethod
+    def find_by_username(username):
         """Method returns the user's username"""
         query = """SELECT * FROM users WHERE username = %(username)s"""
         data = {'username': username}
         return Database.find_one(query, data)
 
-    @classmethod
-    def find_by_id(cls, user_id):
+    @staticmethod
+    def find_by_id(user_id):
         """Method to return user's id"""
-        query = """SELECT * FROM users WHERE id = %(id)s"""
+        # query = """SELECT * FROM users WHERE id = %(id)s"""
+        query = """SELECT id::int FROM users"""
         data = {'id': user_id}
-        return Database.find_one(query, data)
-
-    @classmethod
-    def find_by_role(cls, email):
-        """Method to return the user's role"""
-        query = """SELECT * FROM users WHERE user_role = %(user_role)s"""
-        data = {'email': email}
-        return Database.find_one(query, data)
+        if Database.find_one(query, data):
+            return True
+        return False
 
     @staticmethod
     def delete(user_id):
         pass
 
     @staticmethod
-    def generate_token(user_id):
+    def generate_token(user_role):
         """
         Generates authentication token.
-        :param user_id:
+        :param user_role:
         :return: string
         """
         try:
             payload = {
                 'exp': datetime.utcnow() + timedelta(minutes=60),
                 'iat': datetime.utcnow(),
-                'sub': user_id
+                'sub': user_role
             }
             # create byte string token using payload and secret key
             jwt_string = jwt.encode(

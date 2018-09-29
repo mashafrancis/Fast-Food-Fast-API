@@ -44,13 +44,14 @@ def create_tables():
             email VARCHAR(80) NOT NULL UNIQUE,
             password_hash VARCHAR(255) NOT NULL,
             date_registered TIMESTAMP WITH TIME ZONE DEFAULT ('now'::text)::date NOT NULL,
-            user_role VARCHAR(80) DEFAULT 'User'
+            user_role VARCHAR(80) NOT NULL
         )
         """,
         """
         CREATE TABLE IF NOT EXISTS blacklist (
-            id INT NOT NULL,
-            tokens CHARACTER VARYING(200) NOT NULL
+            id SERIAL PRIMARY KEY NOT NULL,
+            tokens CHARACTER VARYING(255) NOT NULL,
+            blacklisted_date TIMESTAMP WITH TIME ZONE DEFAULT ('now'::text)::date NOT NULL
         )
         """,
         """
