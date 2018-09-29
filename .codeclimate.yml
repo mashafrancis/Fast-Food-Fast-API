@@ -1,4 +1,5 @@
 ## configuration to be excluded...
+version: "2"
 exclude_patterns:
 - "tests/"
 - "spec/"
@@ -17,7 +18,6 @@ exclude_patterns:
 - "**/vendor/"
 - "**/*_test.go"
 - "**/*.d.ts"
-exclude_patterns:
-  - "app/api/common/decorators.py"
-  - "app/api/common/responses.py"
-  - "app/database/database.py"
+- "app/api/common/decorators.py"
+- "app/api/common/responses.py"
+- "app/database/database.py"
