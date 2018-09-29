@@ -9,7 +9,6 @@ exclude_patterns:
 - "db/"
 - "dist/"
 - "features/"
-- "**/node_modules/"
 - "script/"
 - "**/spec/"
 - "**/test/"
@@ -18,3 +17,7 @@ exclude_patterns:
 - "**/vendor/"
 - "**/*_test.go"
 - "**/*.d.ts"
+exclude_patterns:
+  - "app/api/common/decorators.py"
+  - "app/api/common/responses.py"
+  - "app/database/database.py"

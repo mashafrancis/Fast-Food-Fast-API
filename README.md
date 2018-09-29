@@ -1,3 +1,6 @@
+[![Build Status](https://travis-ci.org/mashafrancis/fast-food-fast-api.svg?)](https://travis-ci.org/mashafrancis/fast-food-fast-api)
+[![Coverage Status](https://coveralls.io/repos/github/mashafrancis/fast-food-fast-api/badge.svg?branch=ft-jwt-security-160785403)](https://coveralls.io/github/mashafrancis/fast-food-fast-api?branch=ft-jwt-security-160785403)
+
 # Fast-Food-Fast
 Fast-Food-Fast is a food delivery service app for a restaurant.
 
