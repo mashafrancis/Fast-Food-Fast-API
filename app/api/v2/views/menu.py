@@ -93,6 +93,20 @@ class MenuIdView(MethodView):
         except MenuError.NotFound as e:
             return e.message
 
+    @admin_required
+    def delete(self, menu_id):
+        """Endpoint for deleting a particular order."""
+        order = Menu.find_by_id(menu_id)
+        try:
+            if order:
+                Menu.delete(menu_id)
+                response = "Menu has been deleted!"
+                return Response.complete_request(response)
+            else:
+                raise MenuError.NotFound("Sorry, No Menu found! Create one.")
+        except MenuError.NotFound as e:
+            return e.message
+
 
 # Define API resource
 menu_view = MenuView.as_view('menu_view')
