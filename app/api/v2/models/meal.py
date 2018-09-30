@@ -4,7 +4,7 @@ from app.database.database import Database
 import app.api.common.responses as MealError
 
 
-class Menu:
+class Meal:
     def __init__(self, name, description, price=0):
         self.name = name
         self.description = description
@@ -27,7 +27,7 @@ class Menu:
         return Database.insert(query, data)
 
     @staticmethod
-    def list_all_menu():
+    def list_all_meals():
         """Method lists all available menu in a table"""
         query = """SELECT * FROM meals"""
         return Database.find_all(query)

@@ -29,9 +29,17 @@ class Response:
 
     @staticmethod
     def define_menu(menu):
-        """Return a dictionary of the orders object"""
+        """Return a dictionary of the menu object"""
         obj = {menu[0]: {"name": menu[1],
-                         "description": menu[2], }}
+                         "description": menu[2]}}
+        return obj
+
+    @staticmethod
+    def define_meal(meal):
+        """Return a dictionary of the meal object"""
+        obj = {meal[0]: {"name": meal[1],
+                         "description": meal[2],
+                         "price": meal[4]}}
         return obj
 
     @staticmethod
