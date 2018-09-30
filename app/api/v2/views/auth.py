@@ -1,4 +1,4 @@
-from flask import request, Blueprint
+from flask import request, Blueprint, jsonify
 from flask.views import MethodView
 
 import app.api.common.responses as UserErrors
@@ -82,29 +82,30 @@ class LogoutView(MethodView):
     """This class based view handles the user logout view"""
 
     def post(self):
-        try:
-            header_auth = request.headers.get('Authorization')
-            if not header_auth:
-                raise UserErrors.BadRequest('No token provided')
-            if header_auth:
-                access_token = header_auth.split(" ")[1]
-            else:
-                access_token = ""
+        header_auth = request.headers.get('Authorization')
 
+        if not header_auth:
+            response = jsonify({'message': 'No token provided'})
+            response.status_code = 500
+            return response
+        else:
+            access_token = header_auth.split(" ")[1]
             if access_token:
-                response =  User.decode_token(access_token)
-                if not isinstance(response, str):
-                    blacklist_token = BlackList(access_token)
-                    if blacklist_token.save():
-                        return AuthResponse.complete_request('You have successfully logged out!')
-                    else:
-                        raise UserErrors.BadRequest('Fail')
+                email = User.decode_token(access_token)
+                if not isinstance(email, str):
+                    invalid_token = BlackList(access_token)
+                    invalid_token.save()
+                    response = jsonify({'message': 'You have been logged out successfully'})
+                    response.status_code = 200
+                    return response
                 else:
-                    raise UserErrors.BadRequest('Fail')
+                    response = jsonify({'message': email})
+                    response.status_code = 401
+                    return response
             else:
-                raise UserErrors.BadRequest('Fail')
-        except UserErrors.BadRequest as e:
-            return e.message
+                response = jsonify({'message': 'Invalid Token!'})
+                response.status_code = 401
+                return response
 
 
 registration_view = RegistrationView.as_view('register_view')
