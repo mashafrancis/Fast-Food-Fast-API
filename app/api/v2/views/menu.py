@@ -1,4 +1,4 @@
-from flask import request, Blueprint
+from flask import request, Blueprint, jsonify
 from flask.views import MethodView
 
 import app.api.common.responses as MenuError
@@ -70,9 +70,26 @@ class MenuIdView(MethodView):
         try:
             menu_name = Menu.find_by_id(menu_id)
             if not menu_name:
-                raise MenuError.NotFound("Sorry, Menu does't exist!".format(menu_id))
+                raise MenuError.NotFound("Sorry, Menu does't exist!")
             data = Response.define_menu(menu_name)
             return Response.complete_request(data)
+        except MenuError.NotFound as e:
+            return e.message
+
+    @admin_required
+    def put(self, menu_id):
+        """Endpoint for updating a particular order."""
+        menu_name = Menu.find_by_id(menu_id)
+        data = request.get_json(force=True)
+        try:
+            if not menu_name:
+                raise MenuError.NotFound("Sorry, Menu does't exist! Create one?")
+            else:
+                menu_name = data['name']
+                description = data['description']
+
+                Menu.update_menu(menu_id, name=menu_name, description=description)
+                return jsonify({'order': 'Updated'}, 200)
         except MenuError.NotFound as e:
             return e.message
 

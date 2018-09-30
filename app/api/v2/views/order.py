@@ -25,7 +25,7 @@ class OrdersView(MethodView):
                     results.append(obj)
                 return Response.complete_request(results)
             else:
-                raise OrderError.NotFound('Sorry, No orders for you!')
+                raise OrderError.NotFound('Sorry, No customer has ordered today!')
         except OrderError.NotFound as e:
             return e.message
 

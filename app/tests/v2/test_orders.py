@@ -27,7 +27,7 @@ class OrderTests(BaseTests):
                                      headers=dict(Authorization="Bearer " + access_token))
         data = json.loads(response.data.decode())
         self.assertTrue(data['status'] == 'Not Found')
-        self.assertEqual(data['message'], u"Sorry, No orders for you!")
+        self.assertEqual(data['message'], u"Sorry, No customer has ordered today!")
         self.assertEqual(response.status_code, 404)
 
         # Test user cannot delete non existent orders

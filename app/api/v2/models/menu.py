@@ -30,6 +30,14 @@ class Menu:
         query = """SELECT * FROM menu"""
         return Database.find_all(query)
 
+    @staticmethod
+    def update_menu(menu_id, name, description):
+        """Methods updates the status of an order"""
+
+        query = """UPDATE menu SET name = %(data1)s, description = %(data2)s WHERE id = %(id)s"""
+        data = {'id': menu_id, 'data1': name, 'data2': description}
+        return Database.update(query, data)
+
     @classmethod
     def find_by_id(cls, menu_id):
         """Method finds an order by it's menu_id"""

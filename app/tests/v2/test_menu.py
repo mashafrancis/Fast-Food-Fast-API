@@ -91,7 +91,8 @@ class MenuTests(BaseTests):
         response = self.client().get('/api/v2/menu/1',
                                      headers=dict(Authorization="Bearer " + access_token))
         self.assertEqual(response.status_code, 200)
-        self.assertIn('Burger', str(response.data))
+        self.assertIn('Drinks', str(response.data))
+        self.assertIn('Get your drinks!', str(response.data))
 
     def test_update_non_existing_order(self):
         """Test updating an menu that does not exist"""
