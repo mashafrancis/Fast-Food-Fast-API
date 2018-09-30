@@ -66,7 +66,7 @@ class MealTests(BaseTests):
                                         headers=dict(Authorization="Bearer " + access_token))
         data = json.loads(response.data.decode())
         self.assertTrue(data['status'] == 'Not Found')
-        self.assertEqual(data['message'], u"There is no menu here!")
+        self.assertEqual(data['message'], u"There is no meal here!")
         self.assertEqual(response.status_code, 404)
 
         # Test for meal found.
