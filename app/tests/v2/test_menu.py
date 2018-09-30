@@ -7,11 +7,11 @@ from .base_test import BaseTests
 class MenuTests(BaseTests):
     """Tests functionality of the menu endpoint"""
 
-    def test_create_new_category(self):
+    def test_create_new_menu(self):
         """Test API can create an menu (POST)"""
         access_token = self.user_token_get()
 
-        response = self.client().post('/api/v2/menu', data=self.category,
+        response = self.client().post('/api/v2/menu', data=self.menu,
                                       content_type='application/json',
                                       headers=dict(Authorization="Bearer " + access_token))
         self.assertEqual(response.status_code, 201)
@@ -42,7 +42,7 @@ class MenuTests(BaseTests):
         self.assertEqual(response.status_code, 404)
 
         # Test for menu found.
-        response = self.client().post('/api/v2/menu', data=self.category,
+        response = self.client().post('/api/v2/menu', data=self.menu,
                                       content_type='application/json',
                                       headers=dict(Authorization="Bearer " + access_token))
         self.assertEqual(response.status_code, 201)
@@ -54,12 +54,12 @@ class MenuTests(BaseTests):
         """Test API can delete all menu (DELETE)"""
         access_token = self.user_token_get()
 
-        response = self.client().post('/api/v2/menu', data=self.category,
+        response = self.client().post('/api/v2/menu', data=self.menu,
                                       content_type='application/json',
                                       headers=dict(Authorization="Bearer " + access_token))
         self.assertEqual(response.status_code, 201)
 
-        response = self.client().post('/api/v2/menu', data=self.category2,
+        response = self.client().post('/api/v2/menu', data=self.menu2,
                                       content_type='application/json',
                                       headers=dict(Authorization="Bearer " + access_token))
         self.assertEqual(response.status_code, 201)
@@ -69,6 +69,61 @@ class MenuTests(BaseTests):
         data = json.loads(response.data.decode())
         self.assertTrue(data['status'] == 'OK')
         self.assertEqual(data['message'], u"All menu has been successfully deleted!")
+        self.assertEqual(response.status_code, 200)
+
+    def test_get_menu_by_id(self):
+        """Tests API can get one menu by using its id"""
+        access_token = self.user_token_get()
+
+        # Test for no menu found.
+        response = self.client().get('/api/v2/menu/20',
+                                     headers=dict(Authorization="Bearer " + access_token))
+        data = json.loads(response.data.decode())
+        self.assertTrue(data['status'] == 'Not Found')
+        self.assertEqual(data['message'], u"Sorry, Menu No 20 does't exist!")
+        self.assertEqual(response.status_code, 404)
+
+        # Test get menu by order_id
+        response = self.client().post('/api/v2/menu', data=self.menu,
+                                      content_type='application/json',
+                                      headers=dict(Authorization="Bearer " + access_token))
+        self.assertEqual(response.status_code, 201)
+        response = self.client().get('/api/v2/menu/1',
+                                     headers=dict(Authorization="Bearer " + access_token))
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('Burger', str(response.data))
+
+    def test_update_non_existing_order(self):
+        """Test updating an menu that does not exist"""
+        access_token = self.user_token_get()
+
+        response = self.client().put('/api/v2/menu/100', data=self.menu2,
+                                     content_type='application/json',
+                                     headers=dict(Authorization="Bearer " + access_token))
+        self.assertEqual(response.status_code, 404)
+
+    def test_order_deletion(self):
+        """Test API can delete and existing menu (DELETE)"""
+        access_token = self.user_token_get()
+
+        # Test deleting non existing menu.
+        response = self.client().delete('/api/v2/menu/10',
+                                        headers=dict(Authorization="Bearer " + access_token))
+        data = json.loads(response.data.decode())
+        self.assertTrue(data['status'] == 'Not Found')
+        self.assertEqual(data['message'], u"Sorry, No Menu found! Create one.")
+        self.assertEqual(response.status_code, 404)
+
+        response = self.client().post('/api/v2/menu', data=self.menu,
+                                      content_type='application/json',
+                                      headers=dict(Authorization="Bearer " + access_token))
+        self.assertEqual(response.status_code, 201)
+        response = self.client().delete('/api/v2/menu/1',
+                                        headers=dict(Authorization="Bearer " + access_token))
+
+        data = json.loads(response.data.decode())
+        self.assertTrue(data['status'] == 'OK')
+        self.assertEqual(data['message'], u"Menu has been deleted!")
         self.assertEqual(response.status_code, 200)
 
 

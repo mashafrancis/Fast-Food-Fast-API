@@ -36,12 +36,12 @@ class BaseTests(unittest.TestCase):
                 'status': 'Accepted'
             })
 
-            self.category = json.dumps({
+            self.menu = json.dumps({
                 'name': 'Drinks',
                 'description': 'Get your drinks!'
             })
 
-            self.category2 = json.dumps({
+            self.menu2 = json.dumps({
                 'name': 'Drinks-2',
                 'description': 'Get your drinks-2!'
             })
