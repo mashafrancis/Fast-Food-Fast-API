@@ -80,7 +80,7 @@ class MenuTests(BaseTests):
                                      headers=dict(Authorization="Bearer " + access_token))
         data = json.loads(response.data.decode())
         self.assertTrue(data['status'] == 'Not Found')
-        self.assertEqual(data['message'], u"Sorry, Menu No 20 does't exist!")
+        self.assertEqual(data['message'], u"Sorry, Menu does't exist!")
         self.assertEqual(response.status_code, 404)
 
         # Test get menu by order_id
