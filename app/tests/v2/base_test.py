@@ -126,12 +126,11 @@ class BaseTests(unittest.TestCase):
         self.assertTrue(data['message'] == u"Order has been added successfully.")
         self.assertEqual(response.status_code, 201)
 
-    def create_menu(self):
-        access_token = self.user_token_get()
+    def create_menu(self, token):
         response = self.client().post('/api/v2/menu', data=self.menu,
                                       content_type='application/json',
-                                      headers=dict(Authorization="Bearer " + access_token))
-        return response
+                                      headers=dict(Authorization="Bearer " + token))
+        self.assertEqual(response.status_code, 201)
 
     def user_token_get(self):
         self.register_user('tester', 'test@gmail.com', 'test1234', 'test1234')

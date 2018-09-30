@@ -1,4 +1,4 @@
-from flask import Blueprint
+from flask import Blueprint, request
 from flask.views import MethodView
 
 import app.api.common.responses as MealError
@@ -27,6 +27,29 @@ class MealsView(MethodView):
             else:
                 raise MealError.NotFound('Sorry, No Meal found!')
         except MealError.NotFound as e:
+            return e.message
+
+    def post(self, menu_id):
+        """Endpoint for adding a new order."""
+        data = request.get_json(force=True)
+        name = data['name']
+        description = data['description']
+        price = data['price']
+
+        try:
+            Meal.validate_meal_details(name, description, price)
+            meal = Meal.find_by_name(name)
+            if not meal:
+                new_meal = Meal(name=name,
+                                description=description,
+                                price=price)
+                new_meal.save()
+                return Response.create_resource('A new meal has been offered.')
+            raise MealError.Conflict('You can not add the same meal item twice. Do you want to update?')
+
+        except MealError.Conflict as e:
+            return e.message
+        except MealError.BadRequest as e:
             return e.message
 
 
