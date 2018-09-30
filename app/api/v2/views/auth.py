@@ -2,6 +2,7 @@ from flask import request, Blueprint
 from flask.views import MethodView
 
 import app.api.common.responses as UserErrors
+from app.api.v2.models.blacklist import BlackList
 
 from app.api.v2.models.user import User
 from app.api.common.utils import Utils
@@ -77,13 +78,47 @@ class LoginView(MethodView):
             return e.message
 
 
+class LogoutView(MethodView):
+    """This class based view handles the user logout view"""
+
+    def post(self):
+        try:
+            header_auth = request.headers.get('Authorization')
+            if not header_auth:
+                raise UserErrors.BadRequest('No token provided')
+            if header_auth:
+                access_token = header_auth.split(" ")[1]
+            else:
+                access_token = ""
+
+            if access_token:
+                response =  User.decode_token(access_token)
+                if not isinstance(response, str):
+                    blacklist_token = BlackList(access_token)
+                    if blacklist_token.save():
+                        return AuthResponse.complete_request('You have successfully logged out!')
+                    else:
+                        raise UserErrors.BadRequest('Fail')
+                else:
+                    raise UserErrors.BadRequest('Fail')
+            else:
+                raise UserErrors.BadRequest('Fail')
+        except UserErrors.BadRequest as e:
+            return e.message
+
+
 registration_view = RegistrationView.as_view('register_view')
 login_view = LoginView.as_view('login_view')
+logout_view = LogoutView.as_view('logout_view')
 
 auth.add_url_rule('auth/register',
                   view_func=registration_view,
                   methods=['POST'])
 
 auth.add_url_rule('auth/login',
+                  view_func=login_view,
+                  methods=['POST'])
+
+auth.add_url_rule('auth/logout',
                   view_func=login_view,
                   methods=['POST'])
