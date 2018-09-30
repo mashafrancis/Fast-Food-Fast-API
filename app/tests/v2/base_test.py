@@ -46,6 +46,18 @@ class BaseTests(unittest.TestCase):
                 'description': 'Get your drinks-2!'
             })
 
+            self.meal = json.dumps({
+                'name': 'Burger',
+                'description': 'Get your burger!',
+                'price': '1000'
+            })
+
+            self.meal2 = json.dumps({
+                'name': 'Burger-2',
+                'description': 'Get your burger-2!',
+                'price': '1000'
+            })
+
     def register_user(self, username, email, password, confirm_password):
         """Register user with dummy data"""
         return self.client().post(
@@ -113,6 +125,13 @@ class BaseTests(unittest.TestCase):
         self.assertIn('Burger', str(response.data))
         self.assertTrue(data['message'] == u"Order has been added successfully.")
         self.assertEqual(response.status_code, 201)
+
+    def create_menu(self):
+        access_token = self.user_token_get()
+        response = self.client().post('/api/v2/menu', data=self.menu,
+                                      content_type='application/json',
+                                      headers=dict(Authorization="Bearer " + access_token))
+        return response
 
     def user_token_get(self):
         self.register_user('tester', 'test@gmail.com', 'test1234', 'test1234')
