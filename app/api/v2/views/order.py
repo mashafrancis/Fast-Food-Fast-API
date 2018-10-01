@@ -25,7 +25,7 @@ class OrdersView(MethodView):
                     results.append(obj)
                 return Response.complete_request(results)
             else:
-                raise OrderError.NotFound('Sorry, No customer has ordered today!')
+                raise OrderError.NotFound('Sorry, No customer has placed an order today!')
         except OrderError.NotFound as e:
             return e.message
 
@@ -41,7 +41,7 @@ class OrdersView(MethodView):
                        quantity=quantity,
                        price=price)
         order.save()
-        return Response.create_resource('Order has been added successfully.')
+        return Response.create_resource('Order has been placed successfully.')
 
     @admin_required
     def delete(self):

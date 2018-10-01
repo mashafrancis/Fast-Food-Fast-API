@@ -20,10 +20,10 @@ class Meal:
             'price': self.price
         }
 
-    def save(self):
+    def save(self, menu_id):
         """Method to add a new meal"""
-        data = [self.name, self.description, self.price]
-        query = """INSERT INTO meals (name, description, price) VALUES (%s, %s, %s) RETURNING id"""
+        data = [self.name, self.description, self.price, menu_id]
+        query = """INSERT INTO meals (name, description, price, menu_id) VALUES (%s, %s, %s, %s) RETURNING id"""
         return Database.insert(query, data)
 
     @staticmethod
