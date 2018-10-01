@@ -1,4 +1,4 @@
-from flask import Blueprint, request
+from flask import Blueprint, request, jsonify
 from flask.views import MethodView
 
 import app.api.common.responses as MealError
@@ -97,6 +97,29 @@ class MealView(MethodView):
         except MealError.NotFound as e:
             return e.message
 
+    def put(self, menu_id, meal_id):
+        """Endpoint for updating a particular meal."""
+        try:
+            menu = Menu.find_by_id(menu_id)
+            if not menu:
+                raise MealError.NotFound("Menu does not exist yet! Create one?")
+
+            data = request.get_json(force=True)
+            meal = Meal.find_by_id(meal_id)
+            if not meal:
+                raise MealError.NotFound("Meal does not exist yet! Create one?")
+            else:
+                name = data['name']
+                description = data['description']
+                price = data['price']
+
+                Meal.update_meal(meal_id, name=name, description=description, price=price)
+                updated_meal = Meal.find_by_id(meal_id)
+                obj = Response.define_meal(updated_meal)
+                return Response.complete_request(obj)
+        except MealError.NotFound as e:
+            return e.message
+
 
 # Define API resource
 meals_view = MealsView.as_view('meals_view')
@@ -107,5 +130,5 @@ meals.add_url_rule('menu/<int:menu_id>/meals',
                    methods=['POST', 'GET', 'DELETE'])
 
 meals.add_url_rule('menu/<int:menu_id>/meals/<int:meal_id>',
-                   view_func=meals_view,
+                   view_func=meal_view,
                    methods=['PUT', 'GET', 'DELETE'])

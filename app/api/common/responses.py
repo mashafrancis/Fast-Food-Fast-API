@@ -7,11 +7,13 @@ class Response:
     @staticmethod
     def define_orders(order):
         """Return a dictionary of the orders object"""
-        obj = {order[0]: {"name": order[1],
-                          "quantity": order[2],
-                          "price": order[3],
-                          "date_created": order[4],
-                          "status": order[5]}}
+        obj = {order[0]: {"menu_id": order[1],
+                          "user_id": order[2],
+                          "name": order[3],
+                          "quantity": order[4],
+                          "price": order[5],
+                          "date_created": order[6],
+                          "status": order[7]}}
         return obj
 
     @staticmethod
@@ -37,8 +39,9 @@ class Response:
     @staticmethod
     def define_meal(meal):
         """Return a dictionary of the meal object"""
-        obj = {meal[0]: {"name": meal[1],
-                         "description": meal[2],
+        obj = {meal[0]: {"menu_id": meal[1],
+                         "name": meal[2],
+                         "description": meal[3],
                          "price": meal[4]}}
         return obj
 

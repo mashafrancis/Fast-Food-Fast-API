@@ -33,7 +33,7 @@ class Meal:
         return Database.find_all(query)
 
     @staticmethod
-    def update_menu(meal_id, name, description, price):
+    def update_meal(meal_id, name, description, price):
         """Methods updates the status of an order"""
 
         query = """UPDATE meals SET name = %(data1)s, description = %(data2)s, price = %(data3)s WHERE id = %(id)s"""
