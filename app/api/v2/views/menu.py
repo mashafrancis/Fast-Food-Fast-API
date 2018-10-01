@@ -96,9 +96,9 @@ class MenuIdView(MethodView):
     @admin_required
     def delete(self, menu_id):
         """Endpoint for deleting a particular order."""
-        order = Menu.find_by_id(menu_id)
+        menu_name = Menu.find_by_id(menu_id)
         try:
-            if order:
+            if menu_name:
                 Menu.delete(menu_id)
                 response = "Menu has been deleted!"
                 return Response.complete_request(response)

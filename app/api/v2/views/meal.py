@@ -120,6 +120,23 @@ class MealView(MethodView):
         except MealError.NotFound as e:
             return e.message
 
+    def delete(self, menu_id, meal_id):
+        """Endpoint for deleting a particular order."""
+        try:
+            menu = Menu.find_by_id(menu_id)
+            if not menu:
+                raise MealError.NotFound("Menu does not exist yet! Create one?")
+
+            meal = Meal.find_by_id(meal_id)
+            if meal:
+                Menu.delete(meal_id)
+                response = "Meal has been deleted!"
+                return Response.complete_request(response)
+            else:
+                raise MealError.NotFound("Sorry, No Meal found! Create one.")
+        except MealError.NotFound as e:
+            return e.message
+
 
 # Define API resource
 meals_view = MealsView.as_view('meals_view')
