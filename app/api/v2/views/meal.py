@@ -133,7 +133,7 @@ class MealView(MethodView):
                 response = "Meal has been deleted!"
                 return Response.complete_request(response)
             else:
-                raise MealError.NotFound("Sorry, No Meal found! Create one.")
+                raise MealError.NotFound("Sorry, No Meal found!")
         except MealError.NotFound as e:
             return e.message
 

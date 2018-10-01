@@ -62,7 +62,7 @@ class Menu:
     @staticmethod
     def delete_all():
         """Method deletes all data from the menu table"""
-        query = """TRUNCATE TABLE menu"""
+        query = """DELETE FROM menu"""
         Database.remove_all(query)
 
     @staticmethod

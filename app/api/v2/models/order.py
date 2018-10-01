@@ -58,7 +58,7 @@ class Orders:
     def delete_all():
         """Method deletes all data from the orders table"""
 
-        query = """TRUNCATE TABLE orders"""
+        query = """DELETE FROM orders"""
         Database.remove_all(query)
 
     @staticmethod

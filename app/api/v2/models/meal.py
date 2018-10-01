@@ -64,7 +64,7 @@ class Meal:
     @staticmethod
     def delete_all():
         """Method deletes all data from the menu table"""
-        query = """TRUNCATE TABLE meals"""
+        query = """DELETE FROM meals"""
         Database.remove_all(query)
 
     @staticmethod

@@ -10,6 +10,7 @@ class MealTests(BaseTests):
     def test_create_new_meal(self):
         """Test API can create an meal (POST)"""
         access_token = self.user_token_get()
+        self.create_menu(access_token)
 
         response = self.client().post('/api/v2/menu/1/meals', data=self.meal,
                                       content_type='application/json',
@@ -70,11 +71,11 @@ class MealTests(BaseTests):
         self.assertEqual(response.status_code, 404)
 
         # Test for meal found.
-        response = self.client().post('/api/v2/menu/1/meal', data=self.meal,
+        response = self.client().post('/api/v2/menu/1/meals', data=self.meal,
                                       content_type='application/json',
                                       headers=dict(Authorization="Bearer " + access_token))
         self.assertEqual(response.status_code, 201)
-        response = self.client().get('/api/v2/menu/1/meal',
+        response = self.client().get('/api/v2/menu/1/meals',
                                      headers=dict(Authorization="Bearer " + access_token))
         self.assertEqual(response.status_code, 200)
 
@@ -134,24 +135,24 @@ class MealTests(BaseTests):
                                      headers=dict(Authorization="Bearer " + access_token))
         self.assertEqual(response.status_code, 404)
 
-    def test_order_deletion(self):
+    def test_meals_deletion(self):
         """Test API can delete and existing meal (DELETE)"""
         access_token = self.user_token_get()
         self.create_menu(access_token)
 
         # Test deleting non existing meal.
-        response = self.client().delete('/api/v2/menu/1/meal/100',
+        response = self.client().delete('/api/v2/menu/1/meals/100',
                                         headers=dict(Authorization="Bearer " + access_token))
         data = json.loads(response.data.decode())
         self.assertTrue(data['status'] == 'Not Found')
         self.assertEqual(data['message'], u"Sorry, No Meal found!")
         self.assertEqual(response.status_code, 404)
 
-        response = self.client().post('/api/v2/menu/1/meal', data=self.meal,
+        response = self.client().post('/api/v2/menu/1/meals', data=self.meal,
                                       content_type='application/json',
                                       headers=dict(Authorization="Bearer " + access_token))
         self.assertEqual(response.status_code, 201)
-        response = self.client().delete('/api/v2/menu/1/meal/1',
+        response = self.client().delete('/api/v2/menu/1/meals/1',
                                         headers=dict(Authorization="Bearer " + access_token))
 
         data = json.loads(response.data.decode())
