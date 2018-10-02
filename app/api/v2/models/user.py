@@ -38,7 +38,7 @@ class User:
         """
         data = [self.username, self.email, self.password, 'now', self.role]
         query = """INSERT INTO users (username, email, password_hash, date_registered, user_role) 
-                    VALUES (%s, %s, %s, %s, %s) RETURNING email"""
+                    VALUES (%s, %s, %s, %s, %s) RETURNING id"""
         Database.insert(query, data)
 
     @staticmethod
@@ -97,17 +97,17 @@ class User:
         pass
 
     @staticmethod
-    def generate_token(user_role):
+    def generate_token(user_id):
         """
         Generates authentication token.
-        :param user_role:
+        :param user_id:
         :return: string
         """
         try:
             payload = {
                 'exp': datetime.utcnow() + timedelta(minutes=60),
                 'iat': datetime.utcnow(),
-                'sub': user_role
+                'sub': user_id
             }
             # create byte string token using payload and secret key
             jwt_string = jwt.encode(
