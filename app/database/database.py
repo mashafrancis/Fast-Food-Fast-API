@@ -37,6 +37,15 @@ class Database:
         return row
 
     @staticmethod
+    def return_one(query):
+        with DatabaseConnection() as connection:
+            cursor = connection.cursor()
+            cursor.execute(query)
+            row = cursor.fetchone()
+            cursor.close()
+        return row
+
+    @staticmethod
     def find_all(query):
         with DatabaseConnection() as connection:
             cursor = connection.cursor()

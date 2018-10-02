@@ -53,6 +53,13 @@ class User:
         return Database.find_one(query, data)
 
     @staticmethod
+    def fetch_email_by_id(user_id):
+        """Method to search with user email"""
+        query = """SELECT email FROM users WHERE id = '%s'""" % user_id
+        # data = {'id': user_id}
+        return Database.return_one(query)
+
+    @staticmethod
     def fetch_password(email):
         """Method returns a user's password"""
         query = """SELECT password_hash FROM users WHERE email = %(email)s"""
@@ -62,18 +69,17 @@ class User:
     @staticmethod
     def fetch_user_id(email):
         """Method returns the user's id by querying the email"""
-        query = """SELECT id FROM users WHERE email = %(email)s"""
-        data = {'email': email}
-        return Database.find_one(query, data)
+        query = """SELECT id FROM users WHERE email='%s'""" % email
+        return Database.return_one(query)
 
     @staticmethod
     def fetch_role(email):
         """Method to return the user's role"""
-        query = """SELECT user_role::varchar(80) FROM users"""
-        data = (email,)
+        query = """SELECT user_role FROM users WHERE email='%s'""" % email
+        # data = (email,)
         # query = """SELECT user_role FROM users WHERE email = %s"""
         # data = (email,)
-        return Database.find_one(query, data)
+        return Database.return_one(query)
 
     @staticmethod
     def find_by_username(username):
