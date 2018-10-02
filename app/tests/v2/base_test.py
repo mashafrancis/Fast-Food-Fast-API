@@ -36,14 +36,26 @@ class BaseTests(unittest.TestCase):
                 'status': 'Accepted'
             })
 
-            self.category = json.dumps({
+            self.menu = json.dumps({
                 'name': 'Drinks',
                 'description': 'Get your drinks!'
             })
 
-            self.category2 = json.dumps({
+            self.menu2 = json.dumps({
                 'name': 'Drinks-2',
                 'description': 'Get your drinks-2!'
+            })
+
+            self.meal = json.dumps({
+                'name': 'Burger',
+                'description': 'Get your burger!',
+                'price': '1000'
+            })
+
+            self.meal2 = json.dumps({
+                'name': 'Burger-2',
+                'description': 'Get your burger-2!',
+                'price': '1000'
             })
 
     def register_user(self, username, email, password, confirm_password):
@@ -112,6 +124,12 @@ class BaseTests(unittest.TestCase):
         data = json.loads(response.data.decode())
         self.assertIn('Burger', str(response.data))
         self.assertTrue(data['message'] == u"Order has been added successfully.")
+        self.assertEqual(response.status_code, 201)
+
+    def create_menu(self, token):
+        response = self.client().post('/api/v2/menu', data=self.menu,
+                                      content_type='application/json',
+                                      headers=dict(Authorization="Bearer " + token))
         self.assertEqual(response.status_code, 201)
 
     def user_token_get(self):

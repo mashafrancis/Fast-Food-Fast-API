@@ -16,7 +16,7 @@ class OrderTests(BaseTests):
                                       headers=dict(Authorization="Bearer " + access_token))
         self.assertEqual(response.status_code, 201)
         data = json.loads(response.data.decode())
-        self.assertTrue(data['message'] == u"Order has been added successfully.")
+        self.assertTrue(data['message'] == u"Order has been placed successfully.")
 
     def test_get_all_orders(self):
         """Tests API can get all orders (GET)"""
@@ -27,7 +27,7 @@ class OrderTests(BaseTests):
                                      headers=dict(Authorization="Bearer " + access_token))
         data = json.loads(response.data.decode())
         self.assertTrue(data['status'] == 'Not Found')
-        self.assertEqual(data['message'], u"Sorry, No orders for you!")
+        self.assertEqual(data['message'], u"Sorry, No customer has placed an order today!")
         self.assertEqual(response.status_code, 404)
 
         # Test user cannot delete non existent orders

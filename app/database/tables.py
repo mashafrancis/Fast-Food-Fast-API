@@ -55,28 +55,31 @@ def create_tables():
         )
         """,
         """
+        CREATE TABLE IF NOT EXISTS menu (
+            id SERIAL PRIMARY KEY NOT NULL,
+            name VARCHAR(80) NOT NULL,
+            description VARCHAR(1000) NOT NULL
+        )
+        """,
+        """
         CREATE TABLE IF NOT EXISTS orders (
             id SERIAL PRIMARY KEY NOT NULL,
+            menu_id INTEGER NULL REFERENCES menu(id) ON DELETE CASCADE,
+            user_id INTEGER NULL REFERENCES users(id) ON DELETE CASCADE,
             name VARCHAR(80) NOT NULL,
             quantity INT NOT NULL,
             price INT NOT NULL,
-            date_created TIMESTAMP WITH TIME ZONE DEFAULT ('now'::text)::date NOT NULL,
+            date_created TIMESTAMP WITH TIME ZONE,
             status VARCHAR(80) DEFAULT 'New'
         )
         """,
         """
         CREATE TABLE IF NOT EXISTS meals (
             id SERIAL PRIMARY KEY NOT NULL,
+            menu_id INTEGER NULL REFERENCES menu(id) ON DELETE CASCADE,
             name VARCHAR(80) NOT NULL,
             description VARCHAR(200) NOT NULL,
             price INT NOT NULL
-        )
-        """,
-        """
-        CREATE TABLE IF NOT EXISTS menu (
-            id SERIAL PRIMARY KEY NOT NULL,
-            name VARCHAR(80) NOT NULL,
-            description VARCHAR(1000) NOT NULL
         )
         """
     )

@@ -1,7 +1,8 @@
-from flask import request, Blueprint
+from flask import request, Blueprint, jsonify
 from flask.views import MethodView
 
 import app.api.common.responses as UserErrors
+from app.api.v2.models.blacklist import BlackList
 
 from app.api.v2.models.user import User
 from app.api.common.utils import Utils
@@ -77,13 +78,48 @@ class LoginView(MethodView):
             return e.message
 
 
+class LogoutView(MethodView):
+    """This class based view handles the user logout view"""
+
+    def post(self):
+        header_auth = request.headers.get('Authorization')
+
+        if not header_auth:
+            response = jsonify({'message': 'No token provided'})
+            response.status_code = 500
+            return response
+        else:
+            access_token = header_auth.split(" ")[1]
+            if access_token:
+                email = User.decode_token(access_token)
+                if not isinstance(email, str):
+                    invalid_token = BlackList(access_token)
+                    invalid_token.save()
+                    response = jsonify({'message': 'You have been logged out successfully'})
+                    response.status_code = 200
+                    return response
+                else:
+                    response = jsonify({'message': email})
+                    response.status_code = 401
+                    return response
+            else:
+                response = jsonify({'message': 'Invalid Token!'})
+                response.status_code = 401
+                return response
+
+
 registration_view = RegistrationView.as_view('register_view')
 login_view = LoginView.as_view('login_view')
+logout_view = LogoutView.as_view('logout_view')
 
 auth.add_url_rule('auth/register',
                   view_func=registration_view,
                   methods=['POST'])
 
 auth.add_url_rule('auth/login',
+                  view_func=login_view,
+                  methods=['POST'])
+
+auth.add_url_rule('auth/logout',
                   view_func=login_view,
                   methods=['POST'])

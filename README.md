@@ -19,10 +19,12 @@ These instructions will get you a copy of the project up and running on your loc
 ### Features
 * Users can create accounts and sign in
 * Users can view available food items
-* Users can order a specific food item
+* Users can place an order for a specific food item
 * Admin can view all orders
 * Admin can view a specific food order
 * Admin can update the order status
+* Admin can add, edit and remove a new menu
+* Admin can add, edit and remove a new meal
 
 ### Technologies Used
 **Flask** For API implementation
@@ -48,15 +50,26 @@ an auth route for registration and login.
 ### Available Endpoints
 | Method             | Endpoint                                       | Functionality
 |:------------------:|:----------------------------------------------:|:--------------------------------------:|
- POST                | /api/v1/auth/register                          | Register a new account
- POST                | /api/v1/auth/login                             | Login into application
- GET                 | /api/v1/orders                                 | Get a list of all available orders
- GET                 | /api/v1/orders/<order_id>                      | Get order with specified order_id
- POST                | /api/v1/orders                                 | Create a new order
- DELETE              | /api/v1/orders                                 | Delete all orders
- PUT                 | /api/v1/orders/<order_id>                      | Update order with specified order_id
- DELETE              | /api/v1/orders/<order_id>                      | Delete order with specified order_id
- PATCH               | /api/v1/orders/<order_id>                      | Update the status of a specific order
+ POST                | /api/v2/auth/register                          | Register a new account
+ POST                | /api/v2/auth/login                             | Login into application
+ GET                 | /api/v2/orders                                 | Get a list of all available orders
+ POST                | /api/v2/orders                                 | Create a new order
+ DELETE              | /api/v2/orders                                 | Delete all orders
+ GET                 | /api/v2/orders/<order_id>                      | Get order with specified order_id
+ DELETE              | /api/v2/orders/<order_id>                      | Delete order with specified order_id
+ PUT                 | /api/v2/orders/<order_id>                      | Update the status of a specific order
+ POST                | /api/v2/menu                                   | Create a new menu category
+ GET                 | /api/v2/menu                                   | Get all menu
+ DELETE              | /api/v2/menu                                   | Delete all menu
+ GET                 | /api/v2/menu/<menu_id>                         | Get menu with specified menu_id
+ DELETE              | /api/v2/menu/<menu_id>                         | Delete menu with specified menu_id
+ PUT                 | /api/v2/menu/<menu_id>                         | Update the details of a specific menu
+ GET                 | /api/v2/menu/<menu_id>/meal                    | Get all meals under a specified menu
+ DELETE              | /api/v2/menu/<menu_id>/meal                    | Delete all meals under a specified menu
+ POST                | /api/v2/menu/<menu_id>/meal                    | Create a new meal under a specific menu
+ GET                 | /api/v2/menu/<menu_id>/meal<meal_id>           | Get meal with specified meal_id
+ DELETE              | /api/v2/menu/<menu_id>/meal<meal_id>           | Delete meal with specified meal_id
+ PUT                 | /api/v2/menu/<menu_id>/meal<meal_id>           | Update the details of a specific meal
  
 
 The endpoints can be tested using Postman

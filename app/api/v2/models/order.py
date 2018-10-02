@@ -26,7 +26,7 @@ class Orders:
     def save(self):
         """Method saves an order to the table"""
 
-        data = [self.name, self.quantity, self.price, 'now']
+        data = [self.name, self.quantity, self.price, self.date_created]
         query = """INSERT INTO orders (name, quantity, price, date_created) 
                                 VALUES (%s, %s, %s, %s) RETURNING id"""
         Database.insert(query, data)
@@ -58,7 +58,7 @@ class Orders:
     def delete_all():
         """Method deletes all data from the orders table"""
 
-        query = """TRUNCATE TABLE orders"""
+        query = """DELETE FROM orders"""
         Database.remove_all(query)
 
     @staticmethod
