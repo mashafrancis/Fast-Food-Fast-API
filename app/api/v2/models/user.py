@@ -48,8 +48,8 @@ class User:
     @staticmethod
     def fetch_email(email):
         """Method to search with user email"""
-        query = """SELECT email::varchar(255) FROM users"""
-        data = (email,)
+        query = """SELECT email FROM users WHERE email = %(email)s"""
+        data = {'email': email}
         return Database.find_one(query, data)
 
     @staticmethod
