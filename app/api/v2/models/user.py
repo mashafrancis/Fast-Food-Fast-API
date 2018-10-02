@@ -43,7 +43,8 @@ class User:
 
     @staticmethod
     def list_all_users():
-        pass
+        query = """SELECT * FROM users"""
+        return Database.find_all(query)
 
     @staticmethod
     def fetch_email(email):

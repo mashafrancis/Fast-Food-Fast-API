@@ -19,14 +19,18 @@ class Response:
     @staticmethod
     def define_users(user):
         """Return a dictionary of the users object"""
-        obj = {
-            'user_id': user['user_id'],
-            'username': user['username'],
-            'email': user['email'],
-            'password': user['password'],
-            'role': user['role'],
-            'date_registered': user['date_registered']
-        }
+        obj = {user[0]: {"username": user[1],
+                         "email": user[2],
+                         "date_registered": user[4],
+                         "role": user[5]}}
+        # obj = {
+        #     'user_id': user['user_id'],
+        #     'username': user['username'],
+        #     'email': user['email'],
+        #     'password': user['password'],
+        #     'role': user['role'],
+        #     'date_registered': user['date_registered']
+        # }
         return obj
 
     @staticmethod

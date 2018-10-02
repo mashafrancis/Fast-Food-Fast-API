@@ -25,4 +25,7 @@ def create_app(config_name):
     from app.api.v2.views.meal import meals as meals_blueprint
     app.register_blueprint(meals_blueprint, url_prefix='/api/v2')
 
+    from app.api.v2.views.user import user as users_blueprint
+    app.register_blueprint(users_blueprint, url_prefix='/api/v2')
+
     return app
