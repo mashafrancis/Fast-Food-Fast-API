@@ -179,6 +179,30 @@ class AuthTest(BaseTests):
             logout_again = self.user_logout(access_token)
             self.assertTrue(logout_again.status_code, 401)
 
+    def test_get_all_users(self):
+        """Tests API can get all users (GET)"""
+        with self.client():
+            access_token = self.user_token_get()
+
+            # Test for users found.
+            self.user_register_login()
+            response = self.client().get('/api/v2/users',
+                                         headers=dict(Authorization="Bearer " + access_token))
+            self.assertEqual(response.status_code, 200)
+
+            # Test API can get a single user by ID
+            response = self.client().get('/api/v2/users/1',
+                                         headers=dict(Authorization="Bearer " + access_token))
+            self.assertEqual(response.status_code, 200)
+
+            # Test API can get a non existent user
+            response = self.client().get('/api/v2/users/10',
+                                         headers=dict(Authorization="Bearer " + access_token))
+            data = json.loads(response.data.decode())
+            self.assertEqual(response.status_code, 404)
+            self.assertTrue(data['status'] == 'Not Found')
+            self.assertEqual(data['message'], u"Sorry, User ID No 10 does't exist!")
+
 
 if __name__ == '__main__':
     unittest.main()
