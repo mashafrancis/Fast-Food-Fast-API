@@ -29,10 +29,13 @@ class Orders:
     def save(self):
         """Method saves an order to the table"""
         meal_id = Meal.find_by_name(self.name)[0]
+        ordered_id = 1
 
-        data = [self.user_id, meal_id, self.name, self.quantity, self.price, self.date_created, self.meal_total]
-        query = """INSERT INTO orders (user_id, meal_id, name, quantity, price, date_created, meal_total) 
-                                VALUES (%s, %s, %s, %s, %s, %s, %s) RETURNING id"""
+        data = [self.user_id, ordered_id, meal_id, self.name, self.quantity,
+                self.price, self.date_created, self.meal_total]
+        query = """INSERT INTO orders (user_id, ordered_id, meal_id, name, 
+                                        quantity, price, date_created, meal_total) 
+                                VALUES (%s, %s, %s, %s, %s, %s, %s, %s) RETURNING id"""
         Database.insert(query, data)
 
     @staticmethod
@@ -78,6 +81,14 @@ class Orders:
 
         query = """SELECT * FROM orders WHERE id = %(id)s"""
         data = {'id': order_id}
+        return Database.find_one(query, data)
+
+    @staticmethod
+    def find_meal_by_its_id(meal_id):
+        """Method finds an order by it's order_id"""
+
+        query = """SELECT * FROM orders WHERE meal_id = %(meal_id)s"""
+        data = {'meal_id': meal_id}
         return Database.find_one(query, data)
 
     @staticmethod

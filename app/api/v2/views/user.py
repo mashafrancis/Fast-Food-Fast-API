@@ -50,7 +50,7 @@ class UserOrdersView(MethodView):
 
     @user_required
     def get(self, user_id):
-        """Endpoint for fetching all orders."""
+        """Endpoint for fetching all the users."""
         results = []
         all_orders = Orders.list_all_orders()
         try:
@@ -74,18 +74,29 @@ class UserOrdersView(MethodView):
         # price = data['price']
 
         meal = Meal.find_by_id(meal_id)
-        if not meal:
-            return Error.NotFound('Meal not available')
-        else:
-            name = meal[2]
-            price = meal[4]
+        ordered_meal = Orders.find_meal_by_its_id(meal_id)
+        try:
+            if not meal:
+                raise Error.NotFound('Meal not available')
+            elif ordered_meal:
+                raise Error.Conflict('Meal already exists. Do you want to update the meal item quantity?')
+            else:
+                name = meal[2]
+                price = meal[4]
+                if ordered_meal is True:
+                    Orders.find_orders_by_user_id(user_id)
 
-        order = Orders(user_id=user_id[0],
-                       name=name,
-                       quantity=quantity,
-                       price=price)
-        order.save()
-        return Response.create_resource('Order has been placed successfully.')
+            order = Orders(user_id=user_id[0],
+                           name=name,
+                           quantity=quantity,
+                           price=price)
+
+            order.save()
+            return Response.create_resource('Order has been placed successfully.')
+        except Error.Conflict as e:
+            return e.message
+        except Error.NotFound as e:
+            return e.message
 
     @admin_required
     def delete(self):

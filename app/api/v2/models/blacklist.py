@@ -27,9 +27,10 @@ class BlackList:
 
     def check_token(self):
         """Check if token exists"""
-        data = [self.token]
-        query = """SELECT tokens::int FROM blacklist"""
-        response = Database.find_one(query, data)
+        # data = [self.token]
+        # query = """SELECT tokens::int FROM blacklist"""
+        query = """SELECT tokens FROM blacklist WHERE tokens = '%s'""" % self.token
+        response = Database.return_one(query)
         if response:
             return True
         return False

@@ -7,13 +7,13 @@ class Response:
     @staticmethod
     def define_orders(order):
         """Return a dictionary of the orders object"""
-        obj = {order[0]: {"menu_id": order[1],
-                          "user_id": order[2],
-                          "name": order[4],
-                          "quantity": order[5],
-                          "price": order[6],
-                          "meal_total": order[7],
-                          "date_created": order[3],
+        obj = {order[0]: {"menu_id": order[2],
+                          "user_id": order[3],
+                          "name": order[5],
+                          "quantity": order[6],
+                          "price": order[7],
+                          "meal_total": order[8],
+                          "date_created": order[9],
                           "status": order[8]}}
         # obj = {order[0]: {"user_id": order[2],
         #                   "name": order[3],
@@ -99,6 +99,12 @@ class Unauthorized(Exception):
     def __init__(self, message):
         self.message = make_response(jsonify({"status": "Unauthorized",
                                               "message": message}), 401)
+
+
+class ForbiddenAction(Exception):
+    def __init__(self, message):
+        self.message = make_response(jsonify({"status": "Forbidden Action",
+                                              "message": message}), 403)
 
 
 class NotFound(Exception):

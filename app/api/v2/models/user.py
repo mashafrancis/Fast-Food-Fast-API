@@ -6,6 +6,7 @@ from flask import current_app
 import app.api.common.responses as UserErrors
 
 from app.api.common.utils import Utils
+from app.api.v2.models.blacklist import BlackList
 from app.database.database import Database
 
 
@@ -114,7 +115,7 @@ class User:
         """
         try:
             payload = {
-                'exp': datetime.utcnow() + timedelta(minutes=60),
+                'exp': datetime.utcnow() + timedelta(minutes=600),
                 'iat': datetime.utcnow(),
                 'sub': user_id
             }
@@ -122,8 +123,7 @@ class User:
             jwt_string = jwt.encode(
                 payload,
                 current_app.config['SECRET'],
-                algorithm='HS256'
-            )
+                algorithm='HS256')
             return jwt_string
         except Exception as e:
             return str(e)
@@ -136,7 +136,11 @@ class User:
         :return: integer or string
         """
         try:
+            print(access_token)
             payload = jwt.decode(access_token, current_app.config['SECRET'])
+            # blacklisted_token = BlackList.check_token(access_token)
+            # if blacklisted_token:
+            #     return "Kindly login to perform action."
             return payload['sub']
         except jwt.ExpiredSignatureError:
             return "Signature Expired. Please login!"

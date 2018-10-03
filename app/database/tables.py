@@ -73,6 +73,7 @@ def create_tables():
         """
         CREATE TABLE IF NOT EXISTS orders (
             id SERIAL PRIMARY KEY NOT NULL,
+            order_no INTEGER NOT NULL,
             meal_id INTEGER NULL REFERENCES meals(id) ON DELETE CASCADE,
             user_id INTEGER NULL REFERENCES users(id) ON DELETE CASCADE,
             date_created TIMESTAMP WITH TIME ZONE,

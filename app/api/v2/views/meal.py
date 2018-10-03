@@ -15,7 +15,7 @@ class MealsView(MethodView):
     """Contains GET and POST methods"""
 
     @admin_required
-    def get(self, menu_id, user_id):
+    def get(self, menu_id, meal_id, user_id):
         """Endpoint for fetching all meals."""
         results = []
         all_meals = Meal.list_all_meals()
@@ -65,7 +65,7 @@ class MealsView(MethodView):
             return e.message
 
     @admin_required
-    def delete(self, menu_id):
+    def delete(self, menu_id, user_id):
         """Endpoint for deleting all meals."""
         try:
             menu = Menu.find_by_id(menu_id)
@@ -85,7 +85,7 @@ class MealView(MethodView):
     """Contains GET, PUT and DELETE methods for manipulating a single meal"""
 
     @admin_required
-    def get(self, menu_id, meal_id):
+    def get(self, menu_id, meal_id, user_id):
         """Endpoint for fetching a particular order."""
         try:
             menu = Menu.find_by_id(menu_id)
@@ -101,7 +101,7 @@ class MealView(MethodView):
             return e.message
 
     @admin_required
-    def put(self, menu_id, meal_id):
+    def put(self, menu_id, meal_id, user_id):
         """Endpoint for updating a particular meal."""
         try:
             menu = Menu.find_by_id(menu_id)
@@ -125,7 +125,7 @@ class MealView(MethodView):
             return e.message
 
     @admin_required
-    def delete(self, menu_id, meal_id):
+    def delete(self, menu_id, meal_id, user_id):
         """Endpoint for deleting a particular order."""
         try:
             menu = Menu.find_by_id(menu_id)

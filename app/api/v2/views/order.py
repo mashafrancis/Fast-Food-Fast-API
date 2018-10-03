@@ -3,7 +3,6 @@ from flask.views import MethodView
 
 import app.api.common.responses as OrderError
 from app.api.common.decorators import user_required, admin_required
-from app.api.v2.models.meal import Meal
 
 from app.api.v2.models.order import Orders
 from app.api.common.responses import Response
@@ -15,7 +14,8 @@ orders = Blueprint('order', __name__)
 class OrdersView(MethodView):
     """Contains GET and POST methods"""
 
-    def get(self):
+    @admin_required
+    def get(self, user_id):
         """Endpoint for fetching all orders."""
         results = []
         all_orders = Orders.list_all_orders()
@@ -69,7 +69,7 @@ class OrdersView(MethodView):
 class OrderView(MethodView):
     """Contains GET, PUT and DELETE methods for manipulating a single order"""
 
-    @user_required
+    @admin_required
     def get(self, order_id, user_id):
         """Endpoint for fetching a particular order."""
         try:
@@ -122,7 +122,7 @@ class OrderView(MethodView):
         except OrderError.NotFound as e:
             return e.message
 
-    @user_required
+    @admin_required
     def delete(self, order_id, user_id):
         """Endpoint for deleting a particular order."""
         order = Orders.find_by_id(order_id)

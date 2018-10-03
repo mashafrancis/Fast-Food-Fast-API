@@ -13,8 +13,9 @@ menu = Blueprint('menu', __name__)
 class MenuView(MethodView):
     """Contains GET and POST methods"""
 
-    def post(self):
-        """Endpoint for adding a new order."""
+    @admin_required
+    def post(self, user_id):
+        """Endpoint for adding a new menu category."""
         data = request.get_json(force=True)
         name = data['name']
         description = data['description']
@@ -35,7 +36,7 @@ class MenuView(MethodView):
             return e.message
 
     def get(self):
-        """Endpoint for fetching all orders."""
+        """Endpoint for fetching all menu categories."""
         results = []
         all_menu = Menu.list_all_menu()
         try:
@@ -49,8 +50,9 @@ class MenuView(MethodView):
         except MenuError.NotFound as e:
             return e.message
 
-    def delete(self):
-        """Endpoint for deleting all orders."""
+    @admin_required
+    def delete(self, user_id):
+        """Endpoint for deleting all menu categories."""
         try:
             if not Menu.find_one_entry():
                 raise MenuError.NotFound('There is no menu here!')
@@ -65,7 +67,7 @@ class MenuIdView(MethodView):
     """Contains GET, PUT and DELETE methods for manipulating a single order"""
 
     @admin_required
-    def get(self, menu_id):
+    def get(self, menu_id, user_id):
         """Endpoint for fetching a particular order."""
         try:
             menu_name = Menu.find_by_id(menu_id)
@@ -77,7 +79,7 @@ class MenuIdView(MethodView):
             return e.message
 
     @admin_required
-    def put(self, menu_id):
+    def put(self, menu_id, user_id):
         """Endpoint for updating a particular order."""
         menu_name = Menu.find_by_id(menu_id)
         data = request.get_json(force=True)
@@ -94,7 +96,7 @@ class MenuIdView(MethodView):
             return e.message
 
     @admin_required
-    def delete(self, menu_id):
+    def delete(self, menu_id, user_id):
         """Endpoint for deleting a particular order."""
         menu_name = Menu.find_by_id(menu_id)
         try:
