@@ -16,7 +16,12 @@ class DatabaseConnection:
             return {'error': str(e)}
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        # For the connection not to be left in an inconsistent state
+        """
+        For the connection not to be left in an inconsistent state
+        :param exc_type: exception type
+        :param exc_val: exception value
+        :param exc_tb: exception traceback
+        """
         if exc_type or exc_val or exc_tb:
             self.connection.close()
         else:

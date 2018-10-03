@@ -38,7 +38,7 @@ class User:
         """
         data = [self.username, self.email, self.password, 'now', self.role]
         query = """INSERT INTO users (username, email, password_hash, date_registered, user_role) 
-                    VALUES (%s, %s, %s, %s, %s) RETURNING email"""
+                    VALUES (%s, %s, %s, %s, %s) RETURNING id"""
         Database.insert(query, data)
 
     @staticmethod
@@ -48,9 +48,16 @@ class User:
     @staticmethod
     def fetch_email(email):
         """Method to search with user email"""
-        query = """SELECT email::varchar(255) FROM users"""
-        data = (email,)
+        query = """SELECT email FROM users WHERE email = %(email)s"""
+        data = {'email': email}
         return Database.find_one(query, data)
+
+    @staticmethod
+    def fetch_email_by_id(user_id):
+        """Method to search with user email"""
+        query = """SELECT email FROM users WHERE id = '%s'""" % user_id
+        # data = {'id': user_id}
+        return Database.return_one(query)
 
     @staticmethod
     def fetch_password(email):
@@ -62,18 +69,17 @@ class User:
     @staticmethod
     def fetch_user_id(email):
         """Method returns the user's id by querying the email"""
-        query = """SELECT id FROM users WHERE email = %(email)s"""
-        data = {'email': email}
-        return Database.find_one(query, data)
+        query = """SELECT id FROM users WHERE email='%s'""" % email
+        return Database.return_one(query)
 
     @staticmethod
     def fetch_role(email):
         """Method to return the user's role"""
-        query = """SELECT user_role::varchar(80) FROM users"""
-        data = (email,)
+        query = """SELECT user_role FROM users WHERE email='%s'""" % email
+        # data = (email,)
         # query = """SELECT user_role FROM users WHERE email = %s"""
         # data = (email,)
-        return Database.find_one(query, data)
+        return Database.return_one(query)
 
     @staticmethod
     def find_by_username(username):
@@ -97,17 +103,17 @@ class User:
         pass
 
     @staticmethod
-    def generate_token(user_role):
+    def generate_token(user_id):
         """
         Generates authentication token.
-        :param user_role:
+        :param user_id:
         :return: string
         """
         try:
             payload = {
                 'exp': datetime.utcnow() + timedelta(minutes=60),
                 'iat': datetime.utcnow(),
-                'sub': user_role
+                'sub': user_id
             }
             # create byte string token using payload and secret key
             jwt_string = jwt.encode(

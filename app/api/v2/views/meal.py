@@ -2,7 +2,7 @@ from flask import Blueprint, request, jsonify
 from flask.views import MethodView
 
 import app.api.common.responses as MealError
-from app.api.common.decorators import admin_required
+from app.api.common.decorators import admin_required, user_required
 
 from app.api.v2.models.meal import Meal
 from app.api.common.responses import Response
@@ -14,7 +14,7 @@ meals = Blueprint('meals', __name__)
 class MealsView(MethodView):
     """Contains GET and POST methods"""
 
-    # @admin_required
+    @user_required
     def get(self, menu_id):
         """Endpoint for fetching all meals."""
         results = []
