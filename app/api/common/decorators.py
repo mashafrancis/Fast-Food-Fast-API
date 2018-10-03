@@ -51,5 +51,5 @@ def user_required(f):
                     return make_response(jsonify({'message': response}), 201)
             else:
                 return make_response(jsonify({'error': 'No access token!'}), 401)
-        return f(*args, **kwargs)
+        return f(user_id=user_id, *args, **kwargs)
     return decorated

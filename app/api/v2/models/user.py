@@ -11,14 +11,11 @@ from app.database.database import Database
 
 class User:
 
-    def __init__(self, username, email, password):
+    def __init__(self, username, phone, email, password):
         self.username = username
         self.email = email
+        self.phone = phone
         self.password = Utils.hash_password(password)
-        if self.email == current_app.config['FAST_FOOD_ADMIN']:
-            self.role = 'admin'
-        else:
-            self.role = 'user'
 
     def __repr__(self):
         return '<User {}'.format(self.email)
@@ -26,9 +23,9 @@ class User:
     def to_dict(self):
         return {
             'username': self.username,
+            'phone': self.phone,
             'email': self.email,
-            'password': self.password,
-            'role': self.role
+            'password': self.password
         }
 
     def save(self):
@@ -36,8 +33,8 @@ class User:
         Save a new user to the database
         :return: user_id
         """
-        data = [self.username, self.email, self.password, 'now', self.role]
-        query = """INSERT INTO users (username, email, password_hash, date_registered, user_role) 
+        data = [self.username, self.email, self.phone, self.password, 'now']
+        query = """INSERT INTO users (username, email, phone, password_hash, date_registered) 
                     VALUES (%s, %s, %s, %s, %s) RETURNING id"""
         Database.insert(query, data)
 
@@ -57,6 +54,13 @@ class User:
     def fetch_email_by_id(user_id):
         """Method to search with user email"""
         query = """SELECT email FROM users WHERE id = '%s'""" % user_id
+        # data = {'id': user_id}
+        return Database.return_one(query)
+
+    @staticmethod
+    def fetch_username_by_id(user_id):
+        """Method to search with user email"""
+        query = """SELECT username FROM users WHERE id = '%s'""" % user_id
         # data = {'id': user_id}
         return Database.return_one(query)
 

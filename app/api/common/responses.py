@@ -7,8 +7,14 @@ class Response:
     @staticmethod
     def define_orders(order):
         """Return a dictionary of the orders object"""
-        obj = {order[0]: {"menu_id": order[1],
-                          "user_id": order[2],
+        # obj = {order[0]: {"menu_id": order[1],
+        #                   "user_id": order[2],
+        #                   "name": order[3],
+        #                   "quantity": order[4],
+        #                   "price": order[5],
+        #                   "date_created": order[6],
+        #                   "status": order[7]}}
+        obj = {order[0]: {"user_id": order[2],
                           "name": order[3],
                           "quantity": order[4],
                           "price": order[5],

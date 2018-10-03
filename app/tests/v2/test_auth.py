@@ -195,7 +195,7 @@ class AuthTest(BaseTests):
                                          headers=dict(Authorization="Bearer " + access_token))
             self.assertEqual(response.status_code, 200)
 
-            # # Test API can get a non existent user
+            # # Test API cannot get a non existent user
             # response = self.client().get('/api/v2/users/10',
             #                              headers=dict(Authorization="Bearer " + access_token))
             # data = json.loads(response.data.decode())

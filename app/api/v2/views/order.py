@@ -3,9 +3,11 @@ from flask.views import MethodView
 
 import app.api.common.responses as OrderError
 from app.api.common.decorators import user_required, admin_required
+from app.api.v2.models.meal import Meal
 
 from app.api.v2.models.order import Orders
 from app.api.common.responses import Response
+from app.api.v2.models.user import User
 
 orders = Blueprint('order', __name__)
 
@@ -13,7 +15,6 @@ orders = Blueprint('order', __name__)
 class OrdersView(MethodView):
     """Contains GET and POST methods"""
 
-    @admin_required
     def get(self):
         """Endpoint for fetching all orders."""
         results = []
@@ -30,14 +31,23 @@ class OrdersView(MethodView):
             return e.message
 
     @user_required
-    def post(self):
+    def post(self, user_id):
         """Endpoint for adding a new order."""
         data = request.get_json(force=True)
-        name = data['name']
+        meal_id = data['meal_id']
+        # name = data['name']
         quantity = data['quantity']
-        price = data['price']
+        # price = data['price']
 
-        order = Orders(name=name,
+        meal = Meal.find_by_id(meal_id)
+        if not meal:
+            return OrderError.NotFound('Meal not available')
+        else:
+            name = meal[2]
+            price = meal[4]
+
+        order = Orders(user_id=user_id[0],
+                       name=name,
                        quantity=quantity,
                        price=price)
         order.save()
@@ -59,15 +69,46 @@ class OrdersView(MethodView):
 class OrderView(MethodView):
     """Contains GET, PUT and DELETE methods for manipulating a single order"""
 
-    @admin_required
-    def get(self, order_id):
+    @user_required
+    def get(self, order_id, user_id):
         """Endpoint for fetching a particular order."""
         try:
+            all_meals = []
             order = Orders.find_by_id(order_id)
             if not order:
                 raise OrderError.NotFound("Sorry, Order No {} does't exist!".format(order_id))
-            data = Response.define_orders(order)
-            return Response.complete_request(data)
+            user_id = user_id[0]
+            username = User.fetch_username_by_id(user_id)
+            meals = Orders.find_orders_by_user_id(user_id)
+            # print(meal)
+            if not meals:
+                return OrderError.NotFound('No orders placed by {}'.format(username))
+            else:
+                # keys = ['meal_id', 'name', 'quantity', 'price', 'meal_total']
+                # meal_obj = [meal[1], meal[4], meal[5], meal[6], meal[7]]
+                #
+                # all_meals.append(dict(zip(keys, meal_obj)))
+                # print(all_meals)
+                for meal in meals:
+                    single_meal = {'meal_id': meal[0],
+                                   'name': meal[4],
+                                   'quantity': meal[5],
+                                   'price': meal[6],
+                                   'meal_total': meal[7]}
+
+                    all_meals.append(single_meal)
+                    print(all_meals)
+
+            obj = {order[0]: {"user_id": order[2],
+                              "ordered_by": username[0],
+                              "date_created": order[3],
+                              "status": order[4],
+                              "meals_ordered": all_meals,
+                              "subtotal": order[5],
+                              "delivery_fee": 50,
+                              "TOTAL": order[6]}}
+            # data = Response.define_orders(order)
+            return Response.complete_request(obj)
         except OrderError.NotFound as e:
             return e.message
 

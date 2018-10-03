@@ -42,9 +42,10 @@ def create_tables():
             id SERIAL PRIMARY KEY NOT NULL,
             username VARCHAR(80) NOT NULL UNIQUE,
             email VARCHAR(80) NOT NULL UNIQUE,
+            phone INT NOT NULL,
             password_hash VARCHAR(255) NOT NULL,
             date_registered TIMESTAMP WITH TIME ZONE DEFAULT ('now'::text)::date NOT NULL,
-            user_role VARCHAR(80) NOT NULL
+            user_role VARCHAR(80) DEFAULT 'user'
         )
         """,
         """
@@ -62,24 +63,27 @@ def create_tables():
         )
         """,
         """
-        CREATE TABLE IF NOT EXISTS orders (
-            id SERIAL PRIMARY KEY NOT NULL,
-            menu_id INTEGER NULL REFERENCES menu(id) ON DELETE CASCADE,
-            user_id INTEGER NULL REFERENCES users(id) ON DELETE CASCADE,
-            name VARCHAR(80) NOT NULL,
-            quantity INT NOT NULL,
-            price INT NOT NULL,
-            date_created TIMESTAMP WITH TIME ZONE,
-            status VARCHAR(80) DEFAULT 'New'
-        )
-        """,
-        """
         CREATE TABLE IF NOT EXISTS meals (
             id SERIAL PRIMARY KEY NOT NULL,
             menu_id INTEGER NULL REFERENCES menu(id) ON DELETE CASCADE,
             name VARCHAR(80) NOT NULL,
             description VARCHAR(200) NOT NULL,
             price INT NOT NULL
+        )
+        """,
+        """
+        CREATE TABLE IF NOT EXISTS orders (
+            id SERIAL PRIMARY KEY NOT NULL,
+            meal_id INTEGER NULL REFERENCES meals(id) ON DELETE CASCADE,
+            user_id INTEGER NULL REFERENCES users(id) ON DELETE CASCADE,
+            date_created TIMESTAMP WITH TIME ZONE,
+            name VARCHAR(80) NOT NULL,
+            quantity INT NOT NULL,
+            price INT NOT NULL,
+            meal_total INT NOT NULL,
+            status VARCHAR(80) DEFAULT 'New'
+            -- sub_total INT NOT NULL,
+            -- total INT NOT NULL
         )
         """
     )
@@ -105,10 +109,11 @@ def drop_tables():
     users = "DROP TABLE IF EXISTS users CASCADE"
     blacklist = "DROP TABLE IF EXISTS blacklist CASCADE"
     orders = "DROP TABLE IF EXISTS orders CASCADE"
+    ordered = "DROP TABLE IF EXISTS ordered CASCADE"
     meals = "DROP TABLE IF EXISTS meals CASCADE"
     menu = "DROP TABLE IF EXISTS menu CASCADE"
 
-    queries = [users, blacklist, orders, meals, menu]
+    queries = [users, blacklist, orders, ordered, meals, menu]
     try:
         for query in queries:
             cursor.execute(query)
