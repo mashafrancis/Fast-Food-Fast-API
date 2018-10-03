@@ -7,6 +7,8 @@ import psycopg2
 import psycopg2.extras
 from flask import current_app
 
+from app.api.v2.models.user import User
+
 
 def dbconn():
     """
@@ -44,7 +46,7 @@ def create_tables():
             email VARCHAR(80) NOT NULL UNIQUE,
             password_hash VARCHAR(255) NOT NULL,
             date_registered TIMESTAMP WITH TIME ZONE DEFAULT ('now'::text)::date NOT NULL,
-            user_role VARCHAR(80) DEFAULT 'user'
+            user_role VARCHAR(80)
         )
         """,
         """
@@ -98,6 +100,9 @@ def create_tables():
         cursor.close()
         connection.commit()
         connection.close()
+
+        admin = User(username="admin", email="admin@gmail.com", password="admin1234")
+        admin.save()
     except psycopg2.DatabaseError as e:
         print(e)
 

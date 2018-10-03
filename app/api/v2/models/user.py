@@ -16,6 +16,10 @@ class User:
         self.username = username
         self.email = email
         self.password = Utils.hash_password(password)
+        if self.email == current_app.config['FAST_FOOD_ADMIN']:
+            self.role = 'admin'
+        else:
+            self.role = 'user'
 
     def __repr__(self):
         return '<User {}'.format(self.email)
@@ -32,9 +36,9 @@ class User:
         Save a new user to the database
         :return: user_id
         """
-        data = [self.username, self.email, self.password, 'now']
-        query = """INSERT INTO users (username, email, password_hash, date_registered) 
-                    VALUES (%s, %s, %s, %s) RETURNING id"""
+        data = [self.username, self.email, self.password, 'now', self.role]
+        query = """INSERT INTO users (username, email, password_hash, date_registered, user_role) 
+                    VALUES (%s, %s, %s, %s, %s) RETURNING id"""
         Database.insert(query, data)
 
     @staticmethod
