@@ -30,31 +30,31 @@ class OrdersView(MethodView):
         except OrderError.NotFound as e:
             return e.message
 
-    @user_required
-    def post(self, user_id):
-        """Endpoint for adding a new order."""
-        data = request.get_json(force=True)
-        meal_id = data['meal_id']
-        # name = data['name']
-        quantity = data['quantity']
-        # price = data['price']
-
-        meal = Meal.find_by_id(meal_id)
-        if not meal:
-            return OrderError.NotFound('Meal not available')
-        else:
-            name = meal[2]
-            price = meal[4]
-
-        order = Orders(user_id=user_id[0],
-                       name=name,
-                       quantity=quantity,
-                       price=price)
-        order.save()
-        return Response.create_resource('Order has been placed successfully.')
+    # @user_required
+    # def post(self, user_id):
+    #     """Endpoint for adding a new order."""
+    #     data = request.get_json(force=True)
+    #     meal_id = data['meal_id']
+    #     # name = data['name']
+    #     quantity = data['quantity']
+    #     # price = data['price']
+    #
+    #     meal = Meal.find_by_id(meal_id)
+    #     if not meal:
+    #         return OrderError.NotFound('Meal not available')
+    #     else:
+    #         name = meal[2]
+    #         price = meal[4]
+    #
+    #     order = Orders(user_id=user_id[0],
+    #                    name=name,
+    #                    quantity=quantity,
+    #                    price=price)
+    #     order.save()
+    #     return Response.create_resource('Order has been placed successfully.')
 
     @admin_required
-    def delete(self):
+    def delete(self, user_id):
         """Endpoint for deleting all orders."""
         try:
             if not Orders.find_one_entry():
@@ -80,40 +80,34 @@ class OrderView(MethodView):
             user_id = user_id[0]
             username = User.fetch_username_by_id(user_id)
             meals = Orders.find_orders_by_user_id(user_id)
-            # print(meal)
             if not meals:
                 return OrderError.NotFound('No orders placed by {}'.format(username))
             else:
-                # keys = ['meal_id', 'name', 'quantity', 'price', 'meal_total']
-                # meal_obj = [meal[1], meal[4], meal[5], meal[6], meal[7]]
-                #
-                # all_meals.append(dict(zip(keys, meal_obj)))
-                # print(all_meals)
                 for meal in meals:
-                    single_meal = {'meal_id': meal[0],
+                    single_meal = {'meal_id': meal[1],
                                    'name': meal[4],
                                    'quantity': meal[5],
                                    'price': meal[6],
-                                   'meal_total': meal[7]}
+                                   'meal_total': int(meal[5]) * int(meal[6])}
 
                     all_meals.append(single_meal)
-                    print(all_meals)
+                    meal_totals = single_meal.get('meal_total')
 
-            obj = {order[0]: {"user_id": order[2],
-                              "ordered_by": username[0],
-                              "date_created": order[3],
-                              "status": order[4],
-                              "meals_ordered": all_meals,
-                              "subtotal": order[5],
-                              "delivery_fee": 50,
-                              "TOTAL": order[6]}}
+            obj = {'Order No {}:'.format(order[0]): {"user_id": user_id,
+                                                     "ordered_by": username[0],
+                                                     "date_created": order[3],
+                                                     "status": order[4],
+                                                     "meals_ordered": all_meals,
+                                                     "subtotal": meal_totals,
+                                                     "delivery_fee": 50,
+                                                     "TOTAL": order[6]}}
             # data = Response.define_orders(order)
             return Response.complete_request(obj)
         except OrderError.NotFound as e:
             return e.message
 
     @admin_required
-    def put(self, order_id):
+    def put(self, order_id, user_id):
         """Endpoint for updating a particular order."""
         order = Orders.find_by_id(order_id)
         data = request.get_json(force=True)
@@ -129,7 +123,7 @@ class OrderView(MethodView):
             return e.message
 
     @user_required
-    def delete(self, order_id):
+    def delete(self, order_id, user_id):
         """Endpoint for deleting a particular order."""
         order = Orders.find_by_id(order_id)
         try:

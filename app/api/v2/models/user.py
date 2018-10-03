@@ -11,10 +11,9 @@ from app.database.database import Database
 
 class User:
 
-    def __init__(self, username, phone, email, password):
+    def __init__(self, username, email, password):
         self.username = username
         self.email = email
-        self.phone = phone
         self.password = Utils.hash_password(password)
 
     def __repr__(self):
@@ -23,7 +22,6 @@ class User:
     def to_dict(self):
         return {
             'username': self.username,
-            'phone': self.phone,
             'email': self.email,
             'password': self.password
         }
@@ -33,9 +31,9 @@ class User:
         Save a new user to the database
         :return: user_id
         """
-        data = [self.username, self.email, self.phone, self.password, 'now']
-        query = """INSERT INTO users (username, email, phone, password_hash, date_registered) 
-                    VALUES (%s, %s, %s, %s, %s) RETURNING id"""
+        data = [self.username, self.email, self.password, 'now']
+        query = """INSERT INTO users (username, email, password_hash, date_registered) 
+                    VALUES (%s, %s, %s, %s) RETURNING id"""
         Database.insert(query, data)
 
     @staticmethod

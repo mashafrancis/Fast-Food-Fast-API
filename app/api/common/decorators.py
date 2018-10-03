@@ -19,15 +19,16 @@ def admin_required(f):
             access_token = access_token.encode()
             if access_token:
                 response = User.decode_token(access_token)
+                user_id = response
                 if isinstance(response, str):
-                    user_email = User.fetch_email_by_id(user_id=1)[0]
+                    user_email = User.fetch_email_by_id(user_id=response)[0]
                     role = User.fetch_role(email=user_email)[0]
                     if role != "admin":
                         return make_response(jsonify({
                             'message': 'Only admins are required to perform this function'}), 401)
             else:
                 return make_response(jsonify({'error': 'No access token!'}), 401)
-        return f(*args, **kwargs)
+        return f(user_id=user_id, *args, **kwargs)
     return decorated
 
 

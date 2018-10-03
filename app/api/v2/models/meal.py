@@ -47,12 +47,19 @@ class Meal:
         data = {'id': meal_id}
         return Database.find_one(query, data)
 
-    @classmethod
-    def find_by_name(cls, name):
+    @staticmethod
+    def find_by_name(name):
         """Method finds an order by it's menu_id"""
         query = """SELECT * FROM meals WHERE name = %(name)s"""
         data = {'name': name}
         return Database.find_one(query, data)
+
+    # @staticmethod
+    # def find_meal_id_by_name(name):
+    #     """Method finds an order by it's menu_id"""
+    #     query = """SELECT id FROM meals WHERE name = %(name)s"""
+    #     data = {'name': name}
+    #     return Database.find_one(query, data)
 
     @staticmethod
     def delete(meal_id):

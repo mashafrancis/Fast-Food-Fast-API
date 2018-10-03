@@ -61,7 +61,7 @@ class BaseTests(unittest.TestCase):
     def register_user(self, username, email, password, confirm_password):
         """Register user with dummy data"""
         return self.client().post(
-            '/api/v2/auth/register',
+            '/api/v2/auth/signup',
             content_type='application/json',
             data=json.dumps(dict(username=username, email=email,
                                  password=password, confirm_password=confirm_password)))
@@ -69,7 +69,7 @@ class BaseTests(unittest.TestCase):
     def register_user_wrong_content(self, username, email, password, confirm_password):
         """Register user with dummy data"""
         return self.client().post(
-            '/api/v2/auth/register',
+            '/api/v2/auth/signup',
             content_type='wrong',
             data=json.dumps(dict(username=username, email=email,
                                  password=password, confirm_password=confirm_password)))

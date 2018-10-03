@@ -3,6 +3,7 @@ from flask.views import MethodView
 
 from app.api.common.decorators import user_required, admin_required
 from app.api.common.responses import Response
+from app.api.v2.models.meal import Meal
 from app.api.v2.models.order import Orders
 from app.api.v2.models.user import User
 
@@ -15,7 +16,7 @@ class UsersView(MethodView):
     """This class-based view handles user login and access token generation"""
 
     @admin_required
-    def get(self):
+    def get(self, user_id):
         """API GET Requests for this view. Url ---> /v1/auth/users"""
         try:
             results = []
@@ -47,8 +48,8 @@ class UserView(MethodView):
 class UserOrdersView(MethodView):
     """Contains GET and POST methods"""
 
-    @admin_required
-    def get(self):
+    @user_required
+    def get(self, user_id):
         """Endpoint for fetching all orders."""
         results = []
         all_orders = Orders.list_all_orders()
@@ -64,14 +65,23 @@ class UserOrdersView(MethodView):
             return e.message
 
     @user_required
-    def post(self):
-        """Endpoint for placing a new order."""
+    def post(self, user_id):
+        """Endpoint for adding a new order."""
         data = request.get_json(force=True)
-        name = data['name']
+        meal_id = data['meal_id']
+        # name = data['name']
         quantity = data['quantity']
-        price = data['price']
+        # price = data['price']
 
-        order = Orders(name=name,
+        meal = Meal.find_by_id(meal_id)
+        if not meal:
+            return Error.NotFound('Meal not available')
+        else:
+            name = meal[2]
+            price = meal[4]
+
+        order = Orders(user_id=user_id[0],
+                       name=name,
                        quantity=quantity,
                        price=price)
         order.save()
@@ -92,6 +102,7 @@ class UserOrdersView(MethodView):
 
 users_view = UsersView.as_view('users_view')
 user_view = UserView.as_view('user_view')
+user_order_view = UserOrdersView.as_view('user_orders_view')
 
 user.add_url_rule('users',
                   view_func=users_view,
@@ -100,3 +111,7 @@ user.add_url_rule('users',
 user.add_url_rule('users/<int:user_id>',
                   view_func=user_view,
                   methods=['GET'])
+
+user.add_url_rule('users/orders',
+                  view_func=user_order_view,
+                  methods=['GET', 'POST', 'DELETE'])

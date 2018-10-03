@@ -18,7 +18,6 @@ class RegistrationView(MethodView):
         """API POST Requests for this view. Url ---> /v1/auth/register"""
         data = request.get_json(force=True)
         username = str(data['username'])
-        phone = data['phone']
         email = str(data['email']).lower()
         password = data['password']
         confirm_password = data['confirm_password']
@@ -26,7 +25,7 @@ class RegistrationView(MethodView):
             User.validate_register_details(email, username, password, confirm_password)
             user = User.fetch_email(email)
             if not user:
-                user = User(username=username, phone=phone, email=email, password=password)
+                user = User(username=username, email=email, password=password)
                 user_id = user.save()
                 # generate access_token for user
                 access_token = user.generate_token(user_id)

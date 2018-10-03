@@ -14,8 +14,8 @@ meals = Blueprint('meals', __name__)
 class MealsView(MethodView):
     """Contains GET and POST methods"""
 
-    @user_required
-    def get(self, menu_id):
+    @admin_required
+    def get(self, menu_id, user_id):
         """Endpoint for fetching all meals."""
         results = []
         all_meals = Meal.list_all_meals()
@@ -34,7 +34,8 @@ class MealsView(MethodView):
         except MealError.NotFound as e:
             return e.message
 
-    def post(self, menu_id):
+    @admin_required
+    def post(self, menu_id, user_id):
         """Endpoint for adding a new meal."""
         data = request.get_json(force=True)
         name = data['name']
@@ -63,6 +64,7 @@ class MealsView(MethodView):
         except MealError.NotFound as e:
             return e.message
 
+    @admin_required
     def delete(self, menu_id):
         """Endpoint for deleting all meals."""
         try:
@@ -82,6 +84,7 @@ class MealsView(MethodView):
 class MealView(MethodView):
     """Contains GET, PUT and DELETE methods for manipulating a single meal"""
 
+    @admin_required
     def get(self, menu_id, meal_id):
         """Endpoint for fetching a particular order."""
         try:
@@ -97,6 +100,7 @@ class MealView(MethodView):
         except MealError.NotFound as e:
             return e.message
 
+    @admin_required
     def put(self, menu_id, meal_id):
         """Endpoint for updating a particular meal."""
         try:
@@ -120,6 +124,7 @@ class MealView(MethodView):
         except MealError.NotFound as e:
             return e.message
 
+    @admin_required
     def delete(self, menu_id, meal_id):
         """Endpoint for deleting a particular order."""
         try:
