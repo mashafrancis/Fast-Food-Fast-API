@@ -6,7 +6,6 @@ from flask import current_app
 import app.api.common.responses as UserErrors
 
 from app.api.common.utils import Utils
-from app.api.v2.models.blacklist import BlackList
 from app.database.database import Database
 
 
@@ -39,7 +38,7 @@ class User:
         data = [self.username, self.email, self.password, 'now', self.role]
         query = """INSERT INTO users (username, email, password_hash, date_registered, user_role) 
                     VALUES (%s, %s, %s, %s, %s) RETURNING id"""
-        Database.insert(query, data)
+        return Database.insert(query, data)
 
     @staticmethod
     def list_all_users():
@@ -118,10 +117,12 @@ class User:
         :return: string
         """
         try:
+            role = User.fetch_role(user_id=user_id)
             payload = {
                 'exp': datetime.utcnow() + timedelta(minutes=600),
                 'iat': datetime.utcnow(),
-                'sub': user_id
+                'user_id': user_id,
+                'role': role[0]
             }
             # create byte string token using payload and secret key
             jwt_string = jwt.encode(
@@ -140,12 +141,11 @@ class User:
         :return: integer or string
         """
         try:
-            print(access_token)
             payload = jwt.decode(access_token, current_app.config['SECRET'])
             # blacklisted_token = BlackList.check_token(access_token)
             # if blacklisted_token:
             #     return "Kindly login to perform action."
-            return payload['sub']
+            return payload
         except jwt.ExpiredSignatureError:
             raise UserErrors.Unauthorized("Signature Expired. Please login!")
         except jwt.InvalidTokenError:
@@ -163,14 +163,16 @@ class User:
         :return: True if registered successfully, or False otherwise
         """
         if email and username and password and confirm_password:
-            if not Utils.email_is_valid(email):
-                raise UserErrors.BadRequest("Your email is invalid! "
-                                            "Kindly provide use with the right email address format")
+            if username == "   ":
+                raise UserErrors.BadRequest("Cannot complete because you have white spaces on the username field!")
             if not Utils.username_checker(username):
                 raise UserErrors.BadRequest("Username must contain at least letter; "
                                             "plus other letters or digits and with a min length of 3")
             if User.find_by_username(username):
                 raise UserErrors.Conflict('Username already exists! Kindly choose another.')
+            if not Utils.email_is_valid(email):
+                raise UserErrors.BadRequest("Your email is invalid! "
+                                            "Kindly provide use with the right email address format")
             if not Utils.password_checker(password):
                 raise UserErrors.BadRequest("Password must contain: "
                                             "lowercase letters, atleast a digit, and a min-length of 6")

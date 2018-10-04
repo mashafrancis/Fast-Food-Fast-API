@@ -101,10 +101,12 @@ def create_tables():
         connection.commit()
         connection.close()
 
-        admin = User(username=os.getenv('ADMIN_USERNAME'),
-                     email=os.getenv('ADMIN_EMAIL'),
-                     password=os.getenv('ADMIN_PASSWORD'))
-        admin.save()
+        u = User.fetch_email('admin@gmail.com')
+        if not u:
+            admin = User(username=os.getenv('ADMIN_USERNAME'),
+                         email=os.getenv('ADMIN_EMAIL'),
+                         password=os.getenv('ADMIN_PASSWORD'))
+            admin.save()
     except psycopg2.DatabaseError as e:
         print(e)
 

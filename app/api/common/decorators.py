@@ -14,13 +14,13 @@ def user_required(f):
         access_token = None
         try:
             if 'Authorization' in request.headers:
-                auth_header = request.headers.get('Authorization')
-                access_token = auth_header.split(" ")[1]
+                header_auth = request.headers.get('Authorization')
+                access_token = header_auth.split(" ")[1]
             if not access_token:
                 raise Errors.Unauthorized(
                     "Login to get authorized. If you had logged in, your session expired.")
-            user_id = User.decode_token(access_token)
-            print(user_id)
+            response = User.decode_token(access_token)
+            user_id = response['user_id']
             if isinstance(user_id, str):
                 raise Errors.ForbiddenAction("Token has been rejected")
         except Errors.ForbiddenAction as e:
@@ -38,22 +38,22 @@ def admin_required(f):
         access_token = None
         try:
             if 'Authorization' in request.headers:
-                auth_header = request.headers.get('Authorization')
-                access_token = auth_header.split(" ")[1]
+                header_auth = request.headers.get('Authorization')
+                access_token = header_auth.split(" ")[1]
             if not access_token:
                 raise Errors.Unauthorized(
                     'Login to get authorized. If you had logged in, your session expired.')
-            user_id = User.decode_token(access_token)
-            print(user_id)
-            role = User.fetch_role(user_id[0])[0]
-            print(role)
-            if role != "admin":
+            response = User.decode_token(access_token)
+            role = response['role']
+            user_id = response['user_id']
+            if role == 'user':
                 raise Errors.Unauthorized('Only admins are required to perform this function')
-            if isinstance(user_id, str):
-                raise Errors.ForbiddenAction("Token has been rejected")
+            else:
+                if isinstance(user_id, str):
+                    raise Errors.ForbiddenAction("Token has been rejected")
         except Errors.ForbiddenAction as e:
             return e.message
         except Errors.Unauthorized as e:
             return e.message
-        return f(user_id=user_id, *args, **kwargs)
+        return f(user_id=user_id[0], *args, **kwargs)
     return decorated
