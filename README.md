@@ -32,7 +32,7 @@ These instructions will get you a copy of the project up and running on your loc
 **Pytest** For testing
 
 ### Installation
-1. To clone this repo run ``https://github.com/mashafrancis/fast-food-fast/tree/master`` from your local terminal
+1. To clone this repo run ``https://github.com/mashafrancis/fast-food-fast-api/tree/master`` from your local terminal
 2. `git checkout develop` to use the develop branch
 3. Cd into the fast-food-fast Folder
 4. Create a virtual environment `python3 -m venv venv`
@@ -202,7 +202,9 @@ Most recent version: Version 2
 [Github Pages](https://mashafrancis.github.io/fast-food-fast/)
 
 ### Run in Postman
-
 [![Run in Postman](https://run.pstmn.io/button.svg)](postman://app/collections/import/1082100-037e53da-021e-4607-bcfe-082a7f3be688-RWgnWL3R?referrer=https%3A%2F%2Fdocumenter.getpostman.com%2Fview%2F1082100%2FRWgnWL3R#?)
+
+View in browser [here](https://documenter.getpostman.com/view/1082100/RWgnWL3R)
+
 ## Author
 * [Francis Masha](https://github.com/mashafrancis)
