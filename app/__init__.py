@@ -1,7 +1,9 @@
 from flask import Flask
+from flask_cors import CORS
 
 from app.database.tables import create_tables
 from instance.config import app_config
+from swagger_ui.flask_swagger_ui import get_swaggerui_blueprint
 
 
 def create_app(config_name):
@@ -9,9 +11,17 @@ def create_app(config_name):
     app.config.from_object(app_config[config_name])
     app.config.from_pyfile('config.py')
     app_config[config_name].init_app(app)
+    CORS(app)
 
     with app.app_context():
         create_tables()
+
+    swagger_url = '/api/v2/docs'
+    api_url = 'swagger_doc.yml'
+
+    swaggerui_blueprint = get_swaggerui_blueprint(swagger_url, api_url)
+
+    app.register_blueprint(swaggerui_blueprint, url_prefix=swagger_url)
 
     from app.api.v2.views.auth import auth as auth_blueprint
     app.register_blueprint(auth_blueprint, url_prefix='/api/v2/')

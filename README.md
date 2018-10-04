@@ -141,8 +141,11 @@ Most recent version: Version 2
 
 ## Documentation Links
 
-#### Frontend Templates
+### Frontend Templates
 [Github Pages](https://mashafrancis.github.io/fast-food-fast/)
 
+### Run in Postman
+
+[![Run in Postman](https://run.pstmn.io/button.svg)](postman://app/collections/import/1082100-037e53da-021e-4607-bcfe-082a7f3be688-RWgnWL3R?referrer=https%3A%2F%2Fdocumenter.getpostman.com%2Fview%2F1082100%2FRWgnWL3R#?)
 ## Author
 * [Francis Masha](https://github.com/mashafrancis)

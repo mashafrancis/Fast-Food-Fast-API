@@ -86,28 +86,27 @@ class OrderView(MethodView):
             order = Orders.find_by_id(order_id)
             if not order:
                 raise OrderError.NotFound("Sorry, Order No {} does't exist!".format(order_id))
-            user_id = user_id
-            username = User.fetch_username_by_id(user_id)
+            username = User.fetch_username_by_id(user_id)[0]
             meals = Orders.find_orders_by_user_id(user_id)
             if not meals:
                 return OrderError.NotFound('No orders placed by {}'.format(username))
             else:
-                for meal in meals:
-                    single_meal = {'meal_id': meal[2],
-                                   'name': meal[5],
-                                   'quantity': meal[6],
-                                   'price': meal[7],
-                                   'meal_total': int(meal[6]) * int(meal[7])}
+                for order in meals:
+                    single_meal = {'meal_id': order[2],
+                                   'name': order[5],
+                                   'quantity': order[6],
+                                   'price': order[7],
+                                   'meal_total': int(order[6]) * int(order[7])}
 
                     all_meals.append(single_meal)
-                    meal_totals = single_meal.get('meal_total')
+                    # meal_totals = single_meal.get('meal_total')
 
             obj = {'Order No {}:'.format(order[0]): {"user_id": user_id,
                                                      "ordered_by": username[0],
                                                      "date_created": order[4],
                                                      "status": order[9],
                                                      "meals_ordered": all_meals,
-                                                     "subtotal": meal_totals,
+                                                     "subtotal": 10,
                                                      "delivery_fee": 50,
                                                      "TOTAL": order[8]}}
             # data = Response.define_orders(order)

@@ -3,6 +3,7 @@ from flask.views import MethodView
 
 import app.api.common.responses as MealError
 from app.api.common.decorators import admin_required
+from app.api.common.utils import Utils
 
 from app.api.v2.models.meal import Meal
 from app.api.common.responses import Response
@@ -18,6 +19,8 @@ class MealsView(MethodView):
     def get(self, menu_id, user_id):
         """Endpoint for fetching all meals."""
         results = []
+        if Utils.url_id_valid(menu_id):
+            return 'Valid'
         all_meals = Meal.list_all_meals()
         try:
             menu = Menu.find_by_id(menu_id)

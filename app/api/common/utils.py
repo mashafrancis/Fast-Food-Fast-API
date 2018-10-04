@@ -45,3 +45,8 @@ class Utils:
         :return: True if passwords match, False otherwise
         """
         return check_password_hash(hashed_password, password)
+
+    @staticmethod
+    def url_id_valid(url_id):
+        """Check url id parameter to be a valid number"""
+        pass
