@@ -9,7 +9,7 @@ class MealTests(BaseTests):
 
     def test_create_new_meal(self):
         """Test API can create an meal (POST)"""
-        access_token = self.user_token_get()
+        access_token = self.get_admin_token()
         self.create_menu(access_token)
 
         response = self.client().post('/api/v2/menu/1/meals', data=self.meal,
@@ -40,7 +40,7 @@ class MealTests(BaseTests):
 
     def test_new_meal_must_be_created_in_a_menu(self):
         """Test API must create a new meal in a menu. (POST)"""
-        access_token = self.user_token_get()
+        access_token = self.get_admin_token()
 
         response = self.client().post('/api/v2/menu/1/meals', data=self.meal,
                                       content_type='application/json',
@@ -50,7 +50,7 @@ class MealTests(BaseTests):
 
     def test_get_all_meals(self):
         """Tests API can get all meals (GET)"""
-        access_token = self.user_token_get()
+        access_token = self.get_admin_token()
         self.create_menu(access_token)
 
         # Test for no meal found.
@@ -81,7 +81,7 @@ class MealTests(BaseTests):
 
     def test_delete_all_meals(self):
         """Test API can delete all meals (DELETE)"""
-        access_token = self.user_token_get()
+        access_token = self.get_admin_token()
         self.create_menu(access_token)
 
         response = self.client().post('/api/v2/menu/1/meals', data=self.meal,
@@ -103,7 +103,7 @@ class MealTests(BaseTests):
 
     def test_get_meal_by_id(self):
         """Tests API can get one meal by using its id"""
-        access_token = self.user_token_get()
+        access_token = self.get_admin_token()
         self.create_menu(access_token)
 
         # Test for no meal found.
@@ -127,7 +127,7 @@ class MealTests(BaseTests):
 
     def test_update_non_existing_order(self):
         """Test updating an meal that does not exist"""
-        access_token = self.user_token_get()
+        access_token = self.get_admin_token()
         self.create_menu(access_token)
 
         response = self.client().put('/api/v2/menu/1/meals/100', data=self.meal2,
@@ -137,7 +137,7 @@ class MealTests(BaseTests):
 
     def test_meals_deletion(self):
         """Test API can delete and existing meal (DELETE)"""
-        access_token = self.user_token_get()
+        access_token = self.get_admin_token()
         self.create_menu(access_token)
 
         # Test deleting non existing meal.

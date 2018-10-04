@@ -15,7 +15,7 @@ class MealsView(MethodView):
     """Contains GET and POST methods"""
 
     @admin_required
-    def get(self, menu_id, meal_id, user_id):
+    def get(self, menu_id, user_id):
         """Endpoint for fetching all meals."""
         results = []
         all_meals = Meal.list_all_meals()

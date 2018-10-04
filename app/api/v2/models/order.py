@@ -33,7 +33,7 @@ class Orders:
 
         data = [self.user_id, ordered_id, meal_id, self.name, self.quantity,
                 self.price, self.date_created, self.meal_total]
-        query = """INSERT INTO orders (user_id, ordered_id, meal_id, name, 
+        query = """INSERT INTO orders (user_id, order_id, meal_id, name, 
                                         quantity, price, date_created, meal_total) 
                                 VALUES (%s, %s, %s, %s, %s, %s, %s, %s) RETURNING id"""
         Database.insert(query, data)

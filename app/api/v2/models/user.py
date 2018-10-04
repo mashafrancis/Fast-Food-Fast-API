@@ -81,9 +81,9 @@ class User:
         return Database.return_one(query)
 
     @staticmethod
-    def fetch_role(email):
+    def fetch_role(user_id):
         """Method to return the user's role"""
-        query = """SELECT user_role FROM users WHERE email='%s'""" % email
+        query = """SELECT user_role FROM users WHERE id='%s'""" % user_id
         # data = (email,)
         # query = """SELECT user_role FROM users WHERE email = %s"""
         # data = (email,)
@@ -147,9 +147,9 @@ class User:
             #     return "Kindly login to perform action."
             return payload['sub']
         except jwt.ExpiredSignatureError:
-            return "Signature Expired. Please login!"
+            raise UserErrors.Unauthorized("Signature Expired. Please login!")
         except jwt.InvalidTokenError:
-            return "Invalid Token. Please Register or Login"
+            raise UserErrors.Unauthorized("Invalid Token. Please Register or Login")
 
     @staticmethod
     def validate_register_details(email, username, password, confirm_password):

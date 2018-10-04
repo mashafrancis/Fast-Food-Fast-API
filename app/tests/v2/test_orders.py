@@ -9,18 +9,26 @@ class OrderTests(BaseTests):
 
     def test_create_order(self):
         """Test API can create an order (POST)"""
-        access_token = self.user_token_get()
+        access_token = self.get_admin_token()
+        access_token2 = self.get_user_token()
 
-        response = self.client().post('/api/v2/orders', data=self.order,
+        self.client().post('/api/v2/menu', data=self.menu,
+                           content_type='application/json',
+                           headers=dict(Authorization="Bearer " + access_token))
+        self.client().post('/api/v2/menu/1/meals', data=self.meal,
+                           content_type='application/json',
+                           headers=dict(Authorization="Bearer " + access_token))
+
+        response = self.client().post('/api/v2/users/orders', data=self.order3,
                                       content_type='application/json',
-                                      headers=dict(Authorization="Bearer " + access_token))
+                                      headers=dict(Authorization="Bearer " + access_token2))
         self.assertEqual(response.status_code, 201)
         data = json.loads(response.data.decode())
         self.assertTrue(data['message'] == u"Order has been placed successfully.")
 
     def test_get_all_orders(self):
         """Tests API can get all orders (GET)"""
-        access_token = self.user_token_get()
+        access_token = self.get_admin_token()
 
         # Test for no orders found.
         response = self.client().get('/api/v2/orders',
@@ -49,7 +57,7 @@ class OrderTests(BaseTests):
 
     def test_get_order_by_id(self):
         """Tests API can get one order by using its id"""
-        access_token = self.user_token_get()
+        access_token = self.get_admin_token()
 
         # Test for no orders found.
         response = self.client().get('/api/v2/orders/2',
@@ -71,7 +79,7 @@ class OrderTests(BaseTests):
 
     def test_update_non_existing_order(self):
         """Test updating an order that does not exist"""
-        access_token = self.user_token_get()
+        access_token = self.get_admin_token()
 
         response = self.client().put('/api/v2/orders/100', data=self.order2,
                                      content_type='application/json',
@@ -80,7 +88,7 @@ class OrderTests(BaseTests):
 
     def test_delete_all_orders(self):
         """Test API can delete all orders (DELETE)"""
-        access_token = self.user_token_get()
+        access_token = self.get_admin_token()
 
         response = self.client().post('/api/v2/orders', data=self.order,
                                       content_type='application/json',
@@ -101,7 +109,7 @@ class OrderTests(BaseTests):
 
     def test_order_deletion(self):
         """Test API can delete and existing order (DELETE)"""
-        access_token = self.user_token_get()
+        access_token = self.get_admin_token()
 
         # Test deleting non existing order.
         response = self.client().delete('/api/v2/orders/10',

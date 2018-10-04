@@ -3,6 +3,7 @@ from flask.views import MethodView
 
 import app.api.common.responses as OrderError
 from app.api.common.decorators import user_required, admin_required
+from app.api.v2.models.meal import Meal
 
 from app.api.v2.models.order import Orders
 from app.api.common.responses import Response
@@ -15,7 +16,7 @@ class OrdersView(MethodView):
     """Contains GET and POST methods"""
 
     @admin_required
-    def get(self, user_id):
+    def get(self, user_id, meal_id):
         """Endpoint for fetching all orders."""
         results = []
         all_orders = Orders.list_all_orders()
@@ -30,28 +31,36 @@ class OrdersView(MethodView):
         except OrderError.NotFound as e:
             return e.message
 
-    # @user_required
-    # def post(self, user_id):
-    #     """Endpoint for adding a new order."""
-    #     data = request.get_json(force=True)
-    #     meal_id = data['meal_id']
-    #     # name = data['name']
-    #     quantity = data['quantity']
-    #     # price = data['price']
-    #
-    #     meal = Meal.find_by_id(meal_id)
-    #     if not meal:
-    #         return OrderError.NotFound('Meal not available')
-    #     else:
-    #         name = meal[2]
-    #         price = meal[4]
-    #
-    #     order = Orders(user_id=user_id[0],
-    #                    name=name,
-    #                    quantity=quantity,
-    #                    price=price)
-    #     order.save()
-    #     return Response.create_resource('Order has been placed successfully.')
+    def post(self):
+        """Endpoint for adding a new order."""
+        data = request.get_json(force=True)
+        meal_id = data['meal_id']
+        quantity = data['quantity']
+
+        meal = Meal.find_by_id(meal_id)
+        ordered_meal = Orders.find_meal_by_its_id(meal_id)
+        try:
+            if not meal:
+                raise OrderError.NotFound('Meal not available')
+            elif ordered_meal:
+                raise OrderError.Conflict('Meal already exists. Do you want to update the meal item quantity?')
+            else:
+                name = meal[2]
+                price = meal[4]
+                # if ordered_meal is True:
+                #     Orders.find_orders_by_user_id(user_id)
+
+            order = Orders(user_id=0,
+                           name=name,
+                           quantity=quantity,
+                           price=price)
+
+            order.save()
+            return Response.create_resource('Order has been placed successfully.')
+        except OrderError.Conflict as e:
+            return e.message
+        except OrderError.NotFound as e:
+            return e.message
 
     @admin_required
     def delete(self, user_id):

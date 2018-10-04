@@ -36,6 +36,16 @@ class BaseTests(unittest.TestCase):
                 'status': 'Accepted'
             })
 
+            self.order3 = json.dumps({
+                'meal_id': '1',
+                'quantity': '2'
+            })
+
+            self.order4 = json.dumps({
+                'meal_id': '2',
+                'quantity': '2'
+            })
+
             self.menu = json.dumps({
                 'name': 'Drinks',
                 'description': 'Get your drinks!'
@@ -135,6 +145,15 @@ class BaseTests(unittest.TestCase):
     def user_token_get(self):
         self.register_user('tester', 'test@gmail.com', 'test1234', 'test1234')
         data = self.login_user('test@gmail.com', 'test1234')
+        access_token = json.loads(data.data.decode())['access_token']
+        return access_token
+
+    def get_admin_token(self):
+        """Get user token"""
+        # email = os.getenv('ADMIN_EMAIL'),
+        # password = os.getenv('ADMIN_PASSWORD')
+        self.register_user('admin', 'admin@gmail.com', 'admin0987', 'admin0987')
+        data = self.login_user(email='admin@gmail.com', password='admin0987')
         access_token = json.loads(data.data.decode())['access_token']
         return access_token
 

@@ -44,7 +44,8 @@ def admin_required(f):
                 raise Errors.Unauthorized(
                     'Login to get authorized. If you had logged in, your session expired.')
             user_id = User.decode_token(access_token)
-            role = User.find_by_id(user_id)
+            print(user_id)
+            role = User.fetch_role(user_id[0])[0]
             print(role)
             if role != "admin":
                 raise Errors.Unauthorized('Only admins are required to perform this function')

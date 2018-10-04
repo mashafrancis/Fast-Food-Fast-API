@@ -75,7 +75,7 @@ def create_tables():
         """
         CREATE TABLE IF NOT EXISTS orders (
             id SERIAL PRIMARY KEY NOT NULL,
-            order_no INTEGER NOT NULL,
+            order_id INTEGER NOT NULL,
             meal_id INTEGER NULL REFERENCES meals(id) ON DELETE CASCADE,
             user_id INTEGER NULL REFERENCES users(id) ON DELETE CASCADE,
             date_created TIMESTAMP WITH TIME ZONE,
@@ -101,7 +101,9 @@ def create_tables():
         connection.commit()
         connection.close()
 
-        admin = User(username="admin", email="admin@gmail.com", password="admin1234")
+        admin = User(username=os.getenv('ADMIN_USERNAME'),
+                     email=os.getenv('ADMIN_EMAIL'),
+                     password=os.getenv('ADMIN_PASSWORD'))
         admin.save()
     except psycopg2.DatabaseError as e:
         print(e)
@@ -114,11 +116,10 @@ def drop_tables():
     users = "DROP TABLE IF EXISTS users CASCADE"
     blacklist = "DROP TABLE IF EXISTS blacklist CASCADE"
     orders = "DROP TABLE IF EXISTS orders CASCADE"
-    ordered = "DROP TABLE IF EXISTS ordered CASCADE"
     meals = "DROP TABLE IF EXISTS meals CASCADE"
     menu = "DROP TABLE IF EXISTS menu CASCADE"
 
-    queries = [users, blacklist, orders, ordered, meals, menu]
+    queries = [users, blacklist, orders, meals, menu]
     try:
         for query in queries:
             cursor.execute(query)

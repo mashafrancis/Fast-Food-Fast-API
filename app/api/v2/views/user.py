@@ -37,9 +37,9 @@ class UserView(MethodView):
     def get(self, user_id):
         """Endpoint for fetching a particular order."""
         try:
-            _user = User.find_by_id(user_id)
+            _user = User.fetch_username_by_id(user_id)
             if _user:
-                return Response.complete_request(_user)
+                return Response.complete_request("Username of ID {} is {}".format(user_id, _user[0]))
             raise Error.NotFound("Sorry, User ID No {} does't exist!".format(user_id))
         except Error.NotFound as e:
             return e.message
@@ -60,7 +60,7 @@ class UserOrdersView(MethodView):
                     results.append(obj)
                 return Response.complete_request(results)
             else:
-                raise Error.NotFound('Sorry, No customer has placed an order today!')
+                raise Error.NotFound('You have not ordered any meal for a while. Place an order now?')
         except Error.NotFound as e:
             return e.message
 
@@ -69,9 +69,7 @@ class UserOrdersView(MethodView):
         """Endpoint for adding a new order."""
         data = request.get_json(force=True)
         meal_id = data['meal_id']
-        # name = data['name']
         quantity = data['quantity']
-        # price = data['price']
 
         meal = Meal.find_by_id(meal_id)
         ordered_meal = Orders.find_meal_by_its_id(meal_id)
@@ -98,7 +96,7 @@ class UserOrdersView(MethodView):
         except Error.NotFound as e:
             return e.message
 
-    @admin_required
+    @user_required
     def delete(self):
         """Endpoint for deleting all orders."""
         try:
