@@ -97,7 +97,7 @@ class UserOrdersView(MethodView):
             return e.message
 
     @user_required
-    def delete(self):
+    def delete(self, user_id):
         """Endpoint for deleting all orders."""
         try:
             if not Orders.find_one_entry():

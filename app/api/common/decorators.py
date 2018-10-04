@@ -21,6 +21,7 @@ def user_required(f):
                     "Login to get authorized. If you had logged in, your session expired.")
             response = User.decode_token(access_token)
             user_id = response['user_id']
+            print(user_id)
             if isinstance(user_id, str):
                 raise Errors.ForbiddenAction("Token has been rejected")
         except Errors.ForbiddenAction as e:
@@ -55,5 +56,5 @@ def admin_required(f):
             return e.message
         except Errors.Unauthorized as e:
             return e.message
-        return f(user_id=user_id[0], *args, **kwargs)
+        return f(*args, **kwargs, user_id=user_id[0])
     return decorated

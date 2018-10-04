@@ -16,7 +16,7 @@ class OrdersView(MethodView):
     """Contains GET and POST methods"""
 
     @admin_required
-    def get(self, user_id, meal_id):
+    def get(self, user_id):
         """Endpoint for fetching all orders."""
         results = []
         all_orders = Orders.list_all_orders()
@@ -31,36 +31,36 @@ class OrdersView(MethodView):
         except OrderError.NotFound as e:
             return e.message
 
-    def post(self):
-        """Endpoint for adding a new order."""
-        data = request.get_json(force=True)
-        meal_id = data['meal_id']
-        quantity = data['quantity']
-
-        meal = Meal.find_by_id(meal_id)
-        ordered_meal = Orders.find_meal_by_its_id(meal_id)
-        try:
-            if not meal:
-                raise OrderError.NotFound('Meal not available')
-            elif ordered_meal:
-                raise OrderError.Conflict('Meal already exists. Do you want to update the meal item quantity?')
-            else:
-                name = meal[2]
-                price = meal[4]
-                # if ordered_meal is True:
-                #     Orders.find_orders_by_user_id(user_id)
-
-            order = Orders(user_id=0,
-                           name=name,
-                           quantity=quantity,
-                           price=price)
-
-            order.save()
-            return Response.create_resource('Order has been placed successfully.')
-        except OrderError.Conflict as e:
-            return e.message
-        except OrderError.NotFound as e:
-            return e.message
+    # def post(self):
+    #     """Endpoint for adding a new order."""
+    #     data = request.get_json(force=True)
+    #     meal_id = data['meal_id']
+    #     quantity = data['quantity']
+    #
+    #     meal = Meal.find_by_id(meal_id)
+    #     ordered_meal = Orders.find_meal_by_its_id(meal_id)
+    #     try:
+    #         if not meal:
+    #             raise OrderError.NotFound('Meal not available')
+    #         elif ordered_meal:
+    #             raise OrderError.Conflict('Meal already exists. Do you want to update the meal item quantity?')
+    #         else:
+    #             name = meal[2]
+    #             price = meal[4]
+    #             # if ordered_meal is True:
+    #             #     Orders.find_orders_by_user_id(user_id)
+    #
+    #         order = Orders(user_id=0,
+    #                        name=name,
+    #                        quantity=quantity,
+    #                        price=price)
+    #
+    #         order.save()
+    #         return Response.create_resource('Order has been placed successfully.')
+    #     except OrderError.Conflict as e:
+    #         return e.message
+    #     except OrderError.NotFound as e:
+    #         return e.message
 
     @admin_required
     def delete(self, user_id):
@@ -86,30 +86,30 @@ class OrderView(MethodView):
             order = Orders.find_by_id(order_id)
             if not order:
                 raise OrderError.NotFound("Sorry, Order No {} does't exist!".format(order_id))
-            user_id = user_id[0]
+            user_id = user_id
             username = User.fetch_username_by_id(user_id)
             meals = Orders.find_orders_by_user_id(user_id)
             if not meals:
                 return OrderError.NotFound('No orders placed by {}'.format(username))
             else:
                 for meal in meals:
-                    single_meal = {'meal_id': meal[1],
-                                   'name': meal[4],
-                                   'quantity': meal[5],
-                                   'price': meal[6],
-                                   'meal_total': int(meal[5]) * int(meal[6])}
+                    single_meal = {'meal_id': meal[2],
+                                   'name': meal[5],
+                                   'quantity': meal[6],
+                                   'price': meal[7],
+                                   'meal_total': int(meal[6]) * int(meal[7])}
 
                     all_meals.append(single_meal)
                     meal_totals = single_meal.get('meal_total')
 
             obj = {'Order No {}:'.format(order[0]): {"user_id": user_id,
                                                      "ordered_by": username[0],
-                                                     "date_created": order[3],
-                                                     "status": order[4],
+                                                     "date_created": order[4],
+                                                     "status": order[9],
                                                      "meals_ordered": all_meals,
                                                      "subtotal": meal_totals,
                                                      "delivery_fee": 50,
-                                                     "TOTAL": order[6]}}
+                                                     "TOTAL": order[8]}}
             # data = Response.define_orders(order)
             return Response.complete_request(obj)
         except OrderError.NotFound as e:

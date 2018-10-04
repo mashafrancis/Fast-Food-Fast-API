@@ -46,6 +46,10 @@ class BaseTests(unittest.TestCase):
                 'quantity': '2'
             })
 
+            self.update_order = json.dumps({
+                'status': 'Accepted'
+            })
+
             self.menu = json.dumps({
                 'name': 'Drinks',
                 'description': 'Get your drinks!'

@@ -13,8 +13,8 @@ class Response:
                           "quantity": order[6],
                           "price": order[7],
                           "meal_total": order[8],
-                          "date_created": order[9],
-                          "status": order[8]}}
+                          "date_created": order[4],
+                          "status": order[9]}}
         # obj = {order[0]: {"user_id": order[2],
         #                   "name": order[3],
         #                   "quantity": order[4],
