@@ -66,7 +66,7 @@ class MenuView(MethodView):
 class MenuIdView(MethodView):
     """Contains GET, PUT and DELETE methods for manipulating a single order"""
 
-    def get(self, menu_id, user_id):
+    def get(self, menu_id):
         """Endpoint for fetching a particular order."""
         try:
             menu_name = Menu.find_by_id(menu_id)
