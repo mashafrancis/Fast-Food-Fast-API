@@ -10,7 +10,7 @@ class DatabaseConnection:
 
     def __enter__(self):
         try:
-            self.connection = psycopg2.connect(current_app.config['DATABASE_URL'], 'postgresql:///test_andela')
+            self.connection = psycopg2.connect(current_app.config['DATABASE_URL'])
             return self.connection
         except psycopg2.DatabaseError as e:
             return {'error': str(e)}
