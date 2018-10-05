@@ -1,0 +1,693 @@
+swagger: '2.0'
+info:
+  version: '1.0'
+  title: Fast Food Fast (v2)
+  description: Fast-Food-Fast is a food delivery service app for a restaurant.
+  contact: {}
+host: 127.0.0.1:5000
+basePath: /api/v2
+securityDefinitions:
+  bearer:
+    type: apiKey
+    name: Authorization
+    in: header
+security:
+  - bearer: []
+schemes:
+- http
+consumes:
+- application/json
+produces:
+- application/json
+paths:
+  /auth/signup:
+    post:
+      description: >-
+        This endpoint allows signup of a new user.
+        Accessed by anyone.
+      summary: Signup a New User
+      tags:
+      - Authentication
+      operationId: AuthSignupPost
+      produces:
+      - application/json
+      parameters:
+      - name: Body
+        in: body
+        required: true
+        description: ''
+        schema:
+          $ref: '#/definitions/SignupANewUserrequest'
+      responses:
+        200:
+          description: ''
+      security: []
+  /auth/login:
+    post:
+      description: >-
+        This endpoint allows login of a registered user.
+        Accessed by any registered user.
+      summary: Login a User
+      tags:
+      - Authentication
+      operationId: AuthLoginPost
+      produces:
+      - application/json
+      parameters:
+      - name: Body
+        in: body
+        required: true
+        description: ''
+        schema:
+          $ref: '#/definitions/LoginAUserrequest'
+      responses:
+        200:
+          description: ''
+      security: []
+  /users:
+    get:
+      description: >-
+        This endpoint allows getting all the users in a JSON list.
+        Accessed by the admin only.
+      summary: Get all Users
+      tags:
+      - Users
+      operationId: UsersGet
+      parameters:
+      - name: access-token
+        in: header
+        type: string
+        required: true
+      produces:
+      - application/json
+      responses:
+        200:
+          description: ''
+      security:
+      - bearer: []
+  /users/<user_id>:
+    get:
+      description: >-
+        This endpoint allows getting a specific user by it's user id.
+        Accessed by admin only.
+      summary: Get a User by ID
+      tags:
+      - Users
+      operationId: Users1Get
+      parameters:
+      - name: access-token
+        in: header
+        type: string
+        required: true
+      - name: user_id
+        required: true
+        in: query
+        type: string
+      produces:
+      - application/json
+      responses:
+        200:
+          description: ''
+      security:
+      - bearer: []
+  /users/orders:
+    get:
+      description: >-
+        This endpoint requests the order history of a registered user.
+        Accessed by a logged in user and admin.
+      summary: User Get Order History
+      tags:
+      - Users
+      operationId: UsersOrdersGet
+      parameters:
+      - name: access-token
+        in: header
+        type: string
+        required: true
+      produces:
+      - application/json
+      responses:
+        200:
+          description: ''
+      security:
+      - bearer: []
+    post:
+      description: >-
+        This allows placing of a new order.
+        Accessed by a logged in user and admin.
+      summary: User Place a New Order
+      tags:
+      - Users
+      operationId: UsersOrdersPost
+      produces:
+      - application/json
+      parameters:
+      - name: Body
+        in: body
+        required: true
+        description: ''
+        schema:
+          $ref: '#/definitions/UserPlaceANewOrderrequest'
+      responses:
+        200:
+          description: ''
+      security:
+      - bearer: []
+  /menu:
+    get:
+      description: >-
+        This endpoint allows getting of all menu categories.
+        Accessed by the admin only.
+      summary: Get all Menu Categories
+      tags:
+      - Menu
+      operationId: MenuGet
+      parameters:
+      - name: access-token
+        in: header
+        type: string
+        required: true
+      produces:
+      - application/json
+      responses:
+        200:
+          description: ''
+      security: []
+    post:
+      description: >-
+        This endpoint allows creation of a new menu category.
+        Accessed by the admin only.
+      summary: Add a New Menu Category
+      tags:
+      - Menu
+      operationId: MenuPost
+      produces:
+      - application/json
+      parameters:
+      - name: access-token
+        in: header
+        type: string
+        required: true
+      - name: Body
+        in: body
+        required: true
+        description: ''
+        schema:
+          $ref: '#/definitions/AddANewMenuCategoryrequest'
+      responses:
+        200:
+          description: ''
+      security:
+      - bearer: []
+    delete:
+      description: >-
+        This endpoint allows deletion of all menu categories.
+        Accessed by the admin only.
+      summary: Delete all Menu Categories
+      tags:
+      - Menu
+      operationId: MenuDelete
+      produces:
+      - application/json
+      parameters: []
+      responses:
+        200:
+          description: ''
+      security:
+      - bearer: []
+  /menu/<menu_id>:
+    get:
+      description: >-
+        This endpoint allows getting of a menu category by it's id.
+        Accessed by the admin only.
+      summary: Get a Menu Category by ID
+      tags:
+      - Menu
+      operationId: Menu1Get
+      parameters:
+      - name: access-token
+        in: header
+        type: string
+        required: true
+      - name: menu_id
+        required: true
+        in: query
+        type: string
+      produces:
+      - application/json
+      responses:
+        200:
+          description: ''
+      security: []
+    put:
+      description: >
+        This endpoint allows editing of a menu category by it's id.
+
+        Accessed by the admin only.
+      summary: Edit Menu Category by ID
+      tags:
+      - Menu
+      operationId: Menu1Put
+      produces:
+      - application/json
+      parameters:
+      - name: access-token
+        in: header
+        type: string
+        required: true
+      - name: menu_id
+        required: true
+        in: query
+        type: string
+      - name: Body
+        in: body
+        required: true
+        description: ''
+        schema:
+          $ref: '#/definitions/EditMenuCategoryByIdrequest'
+      responses:
+        200:
+          description: ''
+      security:
+      - bearer: []
+    delete:
+      description: >-
+        This endpoint allows deleting of a menu category by it's id.
+        Accessed by the admin only.
+      summary: Delete a Menu Category By ID
+      tags:
+      - Menu
+      operationId: Menu1Delete
+      produces:
+      - application/json
+      parameters: []
+      responses:
+        200:
+          description: ''
+      security:
+      - bearer: []
+  /menu/<menu_id>/meals:
+    post:
+      description: >-
+        This endpoint allows addition of a new meal option to a menu category.
+        Accessed by the admin only.
+      summary: Add a New Meal Option
+      tags:
+      - Meals
+      operationId: Menu2MealsPost
+      produces:
+      - application/json
+      parameters:
+      - name: Body
+        in: body
+        required: true
+        description: ''
+        schema:
+          $ref: '#/definitions/AddANewMealOptionrequest'
+      responses:
+        200:
+          description: ''
+      security:
+      - bearer: []
+  /menu/<meal_id>/meals:
+    get:
+      description: >-
+        This endpoint allows getting all the meals in a JSON list.
+
+        Accessed by everyone.
+      summary: Get all Meals Options
+      tags:
+      - Meals
+      operationId: Menu1MealsGet
+      produces:
+      - application/json
+      parameters:
+      - name: Content-Type
+        in: header
+        required: true
+        type: string
+        description: ''
+      responses:
+        200:
+          description: ''
+      security:
+      - bearer: []
+    delete:
+      description: >-
+        This endpoint allows deletion of all meals.
+
+        Accessed by the admin only.
+      summary: Delete all Meal Options
+      tags:
+      - Meals
+      operationId: Menu1MealsDelete
+      produces:
+      - application/json
+      parameters: []
+      responses:
+        200:
+          description: ''
+      security:
+      - bearer: []
+  /menu/<menu_id>/meals/<meal_id>:
+    get:
+      description: >-
+        This endpoints allows getting of a single meal by it's id.
+        Accessible by everyone.
+      summary: Get a Meal Option by ID
+      tags:
+      - Meals
+      operationId: Menu1Meals1Get
+      produces:
+      - application/json
+      parameters: []
+      responses:
+        200:
+          description: ''
+      security: []
+    put:
+      description: >-
+        This endpoints allows editing of a specific meals by Id.
+        Accessed by the admin only.
+      summary: Edit a Meal Option by ID
+      tags:
+      - Meals
+      operationId: Menu1Meals1Put
+      produces:
+      - application/json
+      parameters:
+      - name: Body
+        in: body
+        required: true
+        description: ''
+        schema:
+          $ref: '#/definitions/EditAMealOptionByIdrequest'
+      responses:
+        200:
+          description: ''
+      security:
+      - bearer: []
+  /orders:
+    get:
+      description: >-
+        The endpoint returns all the orders placed by the customers.
+        Accessed by admin only.
+      summary: Get all Orders
+      tags:
+      - Orders
+      operationId: OrdersGet
+      produces:
+      - application/json
+      parameters: []
+      responses:
+        200:
+          description: ''
+      security:
+      - bearer: []
+    post:
+      description: This endpoint allows a non-registered user to place an order, however they will need to add more details to their order.
+      summary: Non-Users Place a New Order
+      tags:
+      - Orders
+      operationId: OrdersPost
+      produces:
+      - application/json
+      parameters:
+      - name: Body
+        in: body
+        required: true
+        description: ''
+        schema:
+          $ref: '#/definitions/NonUsersPlaceaNewOrderRequest'
+      responses:
+        200:
+          description: ''
+      security: []
+    delete:
+      description: >-
+        This endpoint allows deletion of all the orders.
+        Accessed by the admin only.
+      summary: Delete all Orders
+      tags:
+      - Orders
+      operationId: OrdersDelete
+      produces:
+      - application/json
+      parameters: []
+      responses:
+        200:
+          description: ''
+      security:
+      - bearer: []
+  /orders/<order_id>:
+    get:
+      description: >-
+        The endpoint returns an order by it's order_id.
+        Accessed by admin only.
+      summary: Get Order by ID
+      tags:
+      - Orders
+      operationId: Orders1Get
+      produces:
+      - application/json
+      parameters: []
+      responses:
+        200:
+          description: ''
+      security:
+      - bearer: []
+    delete:
+      description: >-
+        The endpoint allows deletion of a single order by it's id.
+        Accessed by admin only.
+      summary: Delete Order by ID
+      tags:
+      - Orders
+      operationId: Orders1Delete
+      produces:
+      - application/json
+      parameters: []
+      responses:
+        200:
+          description: ''
+      security:
+      - bearer: []
+    put:
+      description: >-
+        This endpoint allows changing of the order status by it's order id.
+        Accessed by the admin only.
+      summary: Update Status of a Single Order
+      tags:
+      - Orders
+      operationId: Orders3Put
+      produces:
+      - application/json
+      parameters:
+      - name: Body
+        in: body
+        required: true
+        description: ''
+        schema:
+          $ref: '#/definitions/UpdateStatusOfASingleOrderrequest'
+      responses:
+        200:
+          description: ''
+      security:
+      - bearer: []
+
+definitions:
+  SignupANewUserrequest:
+    title: Signup a New UserRequest
+    example:
+      username: test
+      email: test@gmail.com
+      password: mrjunk1
+      confirm_password: mrjunk1
+    type: object
+    properties:
+      username:
+        description: ''
+        example: test
+        type: string
+      email:
+        description: ''
+        example: test@gmail.com
+        type: string
+      password:
+        description: ''
+        example: mrjunk1
+        type: string
+      confirm_password:
+        description: ''
+        example: mrjunk1
+        type: string
+    required:
+    - username
+    - email
+    - password
+    - confirm_password
+  LoginAUserrequest:
+    title: Login a UserRequest
+    example:
+      email: test@gmail.com
+      password: mrjunk1
+    type: object
+    properties:
+      email:
+        description: ''
+        example: test@gmail.com
+        type: string
+      password:
+        description: ''
+        example: mrjunk1
+        type: string
+    required:
+    - email
+    - password
+  UserPlaceANewOrderrequest:
+    title: User Place a New OrderRequest
+    example:
+      meal_id: 1
+      quantity: 10
+    type: object
+    properties:
+      meal_id:
+        description: ''
+        example: 1
+        type: string
+      quantity:
+        description: ''
+        example: 10
+        type: string
+    required:
+    - meal_id
+    - quantity
+  AddANewMenuCategoryrequest:
+    title: Add a New Menu CategoryRequest
+    example:
+      name: Breakfast
+      description: Get your Breakfast!
+    type: object
+    properties:
+      name:
+        description: ''
+        example: Breakfast
+        type: string
+      description:
+        description: ''
+        example: Get your Breakfast!
+        type: string
+    required:
+    - name
+    - description
+  EditMenuCategoryByIdrequest:
+    title: Edit Menu Category by IDRequest
+    example:
+      name: Lunch
+      description: Get your Lunch!
+    type: object
+    properties:
+      name:
+        description: ''
+        example: Lunch
+        type: string
+      description:
+        description: ''
+        example: Get your Lunch!
+        type: string
+    required:
+    - name
+    - description
+  AddANewMealOptionrequest:
+    title: Add a New Meal OptionRequest
+    example:
+      name: Fries
+      description: Get your fries!
+      price: 100
+    type: object
+    properties:
+      name:
+        description: ''
+        example: Fries
+        type: string
+      description:
+        description: ''
+        example: Get your fries!
+        type: string
+      price:
+        description: ''
+        example: 100
+        type: string
+    required:
+    - name
+    - description
+    - price
+  EditAMealOptionByIdrequest:
+    title: Edit a Meal Option by IDRequest
+    example:
+      name: Fries
+      description: Get your fries!
+      price: 500
+    type: object
+    properties:
+      name:
+        description: ''
+        example: Fries
+        type: string
+      description:
+        description: ''
+        example: Get your fries!
+        type: string
+      price:
+        description: ''
+        example: 500
+        type: string
+    required:
+    - name
+    - description
+    - price
+  UpdateStatusOfASingleOrderrequest:
+    title: Update Status of a Single OrderRequest
+    example:
+      status: Complete
+    type: object
+    properties:
+      status:
+        description: ''
+        example: Complete
+        type: string
+    required:
+    - status
+  NonUsersPlaceaNewOrderRequest:
+    title: Non-Users Place a New OrderRequest
+    example:
+      meal_id: 1
+      quantity: 1
+    type: object
+    properties:
+      meal_id:
+        description: ''
+        example: 1
+        type: string
+      quantity:
+        description: ''
+        example: 1
+        type: string
+    required:
+    - meal_id
+    - quantity
+tags:
+- name: Authentication
+  description: This is a API for the authorization endpoints
+
+- name: Users
+  description: This is a API for the users endpoints
+
+- name: Menu
+  description: This is a API for the menu
+
+- name: Meals
+  description: This is a API for the meal endpoints
+
+- name: Orders
+  description: This is a API for the orders endpoints
