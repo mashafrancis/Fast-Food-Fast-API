@@ -19,7 +19,7 @@ def create_app(config_name):
 
     heroku = Heroku(app)
 
-    swagger_url = '/api/v2/docs'
+    swagger_url = '/api/v2/do'
     api_url = 'swagger_doc.yml'
 
     swaggerui_blueprint = get_swaggerui_blueprint(swagger_url, api_url)

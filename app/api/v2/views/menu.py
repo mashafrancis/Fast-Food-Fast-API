@@ -89,9 +89,12 @@ class MenuIdView(MethodView):
                 menu_name = data['name']
                 description = data['description']
 
+                Menu.validate_menu_details(menu_name, description)
                 Menu.update_menu(menu_id, name=menu_name, description=description)
                 return jsonify({'order': 'Updated'}, 200)
         except MenuError.NotFound as e:
+            return e.message
+        except MenuError.BadRequest as e:
             return e.message
 
     @admin_required

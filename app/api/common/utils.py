@@ -24,7 +24,13 @@ class Utils:
     @staticmethod
     def name_checker(name):
         # name_checker = re.match(r"(?=^.{4,}$)(?=.*[a-z])^[A-Za-z0-9_-]+( +[A-Za-z0-9_-]+)*$", name)
-        name_checker = re.match(r"^[a-zA-Z_ ]+$", name)
+        name_checker = re.match(r"^.{3,}[a-zA-Z_]+$", name)
+        return True if name_checker else False
+
+    @staticmethod
+    def description_checker(name):
+        # name_checker = re.match(r"(?=^.{4,}$)(?=.*[a-z])^[A-Za-z0-9_-]+( +[A-Za-z0-9_-]+)*$", name)
+        name_checker = re.match(r"^.{3,}$", name)
         return True if name_checker else False
 
     @staticmethod
