@@ -7,26 +7,37 @@ class Response:
     @staticmethod
     def define_orders(order):
         """Return a dictionary of the orders object"""
-        obj = {order[0]: {"menu_id": order[1],
-                          "user_id": order[2],
-                          "name": order[3],
-                          "quantity": order[4],
-                          "price": order[5],
-                          "date_created": order[6],
-                          "status": order[7]}}
+        obj = {order[0]: {"menu_id": order[2],
+                          "user_id": order[3],
+                          "name": order[5],
+                          "quantity": order[6],
+                          "price": order[7],
+                          "meal_total": order[8],
+                          "date_created": order[4],
+                          "status": order[9]}}
+        # obj = {order[0]: {"user_id": order[2],
+        #                   "name": order[3],
+        #                   "quantity": order[4],
+        #                   "price": order[5],
+        #                   "date_created": order[6],
+        #                   "status": order[7]}}
         return obj
 
     @staticmethod
     def define_users(user):
         """Return a dictionary of the users object"""
-        obj = {
-            'user_id': user['user_id'],
-            'username': user['username'],
-            'email': user['email'],
-            'password': user['password'],
-            'role': user['role'],
-            'date_registered': user['date_registered']
-        }
+        obj = {user[0]: {"username": user[1],
+                         "email": user[2],
+                         "date_registered": user[4],
+                         "role": user[5]}}
+        # obj = {
+        #     'user_id': user['user_id'],
+        #     'username': user['username'],
+        #     'email': user['email'],
+        #     'password': user['password'],
+        #     'role': user['role'],
+        #     'date_registered': user['date_registered']
+        # }
         return obj
 
     @staticmethod
@@ -88,6 +99,12 @@ class Unauthorized(Exception):
     def __init__(self, message):
         self.message = make_response(jsonify({"status": "Unauthorized",
                                               "message": message}), 401)
+
+
+class ForbiddenAction(Exception):
+    def __init__(self, message):
+        self.message = make_response(jsonify({"status": "Forbidden Action",
+                                              "message": message}), 403)
 
 
 class NotFound(Exception):

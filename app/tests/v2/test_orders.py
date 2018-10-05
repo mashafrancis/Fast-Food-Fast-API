@@ -9,9 +9,16 @@ class OrderTests(BaseTests):
 
     def test_create_order(self):
         """Test API can create an order (POST)"""
-        access_token = self.user_token_get()
+        access_token = self.get_admin_token()
 
-        response = self.client().post('/api/v2/orders', data=self.order,
+        self.client().post('/api/v2/menu', data=self.menu,
+                           content_type='application/json',
+                           headers=dict(Authorization="Bearer " + access_token))
+        self.client().post('/api/v2/menu/1/meals', data=self.meal,
+                           content_type='application/json',
+                           headers=dict(Authorization="Bearer " + access_token))
+
+        response = self.client().post('/api/v2/users/orders', data=self.order3,
                                       content_type='application/json',
                                       headers=dict(Authorization="Bearer " + access_token))
         self.assertEqual(response.status_code, 201)
@@ -20,18 +27,24 @@ class OrderTests(BaseTests):
 
     def test_get_all_orders(self):
         """Tests API can get all orders (GET)"""
-        access_token = self.user_token_get()
+        access_token = self.get_admin_token()
+        self.client().post('/api/v2/menu', data=self.menu,
+                           content_type='application/json',
+                           headers=dict(Authorization="Bearer " + access_token))
+        self.client().post('/api/v2/menu/1/meals', data=self.meal,
+                           content_type='application/json',
+                           headers=dict(Authorization="Bearer " + access_token))
 
         # Test for no orders found.
-        response = self.client().get('/api/v2/orders',
+        response = self.client().get('/api/v2/users/orders',
                                      headers=dict(Authorization="Bearer " + access_token))
         data = json.loads(response.data.decode())
         self.assertTrue(data['status'] == 'Not Found')
-        self.assertEqual(data['message'], u"Sorry, No customer has placed an order today!")
+        self.assertEqual(data['message'], u"You have not ordered any meal for a while. Place an order now?")
         self.assertEqual(response.status_code, 404)
 
         # Test user cannot delete non existent orders
-        response = self.client().delete('/api/v2/orders',
+        response = self.client().delete('/api/v2/users/orders',
                                         headers=dict(Authorization="Bearer " + access_token))
         data = json.loads(response.data.decode())
         self.assertTrue(data['status'] == 'Not Found')
@@ -39,17 +52,23 @@ class OrderTests(BaseTests):
         self.assertEqual(response.status_code, 404)
 
         # Test for orders found.
-        response = self.client().post('/api/v2/orders', data=self.order,
+        response = self.client().post('/api/v2/users/orders', data=self.order3,
                                       content_type='application/json',
                                       headers=dict(Authorization="Bearer " + access_token))
         self.assertEqual(response.status_code, 201)
-        response = self.client().get('/api/v2/orders',
+        response = self.client().get('/api/v2/users/orders',
                                      headers=dict(Authorization="Bearer " + access_token))
         self.assertEqual(response.status_code, 200)
 
     def test_get_order_by_id(self):
         """Tests API can get one order by using its id"""
-        access_token = self.user_token_get()
+        access_token = self.get_admin_token()
+        self.client().post('/api/v2/menu', data=self.menu,
+                           content_type='application/json',
+                           headers=dict(Authorization="Bearer " + access_token))
+        self.client().post('/api/v2/menu/1/meals', data=self.meal,
+                           content_type='application/json',
+                           headers=dict(Authorization="Bearer " + access_token))
 
         # Test for no orders found.
         response = self.client().get('/api/v2/orders/2',
@@ -60,7 +79,7 @@ class OrderTests(BaseTests):
         self.assertEqual(response.status_code, 404)
 
         # Test get order by order_id
-        response = self.client().post('/api/v2/orders', data=self.order,
+        response = self.client().post('/api/v2/users/orders', data=self.order3,
                                       content_type='application/json',
                                       headers=dict(Authorization="Bearer " + access_token))
         self.assertEqual(response.status_code, 201)
@@ -71,23 +90,24 @@ class OrderTests(BaseTests):
 
     def test_update_non_existing_order(self):
         """Test updating an order that does not exist"""
-        access_token = self.user_token_get()
+        access_token = self.get_admin_token()
 
-        response = self.client().put('/api/v2/orders/100', data=self.order2,
+        response = self.client().put('/api/v2/orders/100', data=self.update_order,
                                      content_type='application/json',
                                      headers=dict(Authorization="Bearer " + access_token))
         self.assertEqual(response.status_code, 404)
 
     def test_delete_all_orders(self):
         """Test API can delete all orders (DELETE)"""
-        access_token = self.user_token_get()
+        access_token = self.get_admin_token()
+        self.client().post('/api/v2/menu', data=self.menu,
+                           content_type='application/json',
+                           headers=dict(Authorization="Bearer " + access_token))
+        self.client().post('/api/v2/menu/1/meals', data=self.meal,
+                           content_type='application/json',
+                           headers=dict(Authorization="Bearer " + access_token))
 
-        response = self.client().post('/api/v2/orders', data=self.order,
-                                      content_type='application/json',
-                                      headers=dict(Authorization="Bearer " + access_token))
-        self.assertEqual(response.status_code, 201)
-
-        response = self.client().post('/api/v2/orders', data=self.order2,
+        response = self.client().post('/api/v2/users/orders', data=self.order3,
                                       content_type='application/json',
                                       headers=dict(Authorization="Bearer " + access_token))
         self.assertEqual(response.status_code, 201)
@@ -101,7 +121,13 @@ class OrderTests(BaseTests):
 
     def test_order_deletion(self):
         """Test API can delete and existing order (DELETE)"""
-        access_token = self.user_token_get()
+        access_token = self.get_admin_token()
+        self.client().post('/api/v2/menu', data=self.menu,
+                           content_type='application/json',
+                           headers=dict(Authorization="Bearer " + access_token))
+        self.client().post('/api/v2/menu/1/meals', data=self.meal,
+                           content_type='application/json',
+                           headers=dict(Authorization="Bearer " + access_token))
 
         # Test deleting non existing order.
         response = self.client().delete('/api/v2/orders/10',
@@ -111,7 +137,7 @@ class OrderTests(BaseTests):
         self.assertEqual(data['message'], u"Order No 10 does not exist!")
         self.assertEqual(response.status_code, 404)
 
-        response = self.client().post('/api/v2/orders', data=self.order,
+        response = self.client().post('/api/v2/users/orders', data=self.order3,
                                       content_type='application/json',
                                       headers=dict(Authorization="Bearer " + access_token))
         self.assertEqual(response.status_code, 201)

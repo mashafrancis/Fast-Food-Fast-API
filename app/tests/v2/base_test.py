@@ -36,6 +36,20 @@ class BaseTests(unittest.TestCase):
                 'status': 'Accepted'
             })
 
+            self.order3 = json.dumps({
+                'meal_id': '1',
+                'quantity': '2'
+            })
+
+            self.order4 = json.dumps({
+                'meal_id': '2',
+                'quantity': '2'
+            })
+
+            self.update_order = json.dumps({
+                'status': 'Accepted'
+            })
+
             self.menu = json.dumps({
                 'name': 'Drinks',
                 'description': 'Get your drinks!'
@@ -58,10 +72,16 @@ class BaseTests(unittest.TestCase):
                 'price': '1000'
             })
 
+            self.meal3 = json.dumps({
+                'name': 'Burger-3',
+                'description': 'Get your burger-3!',
+                'price': '1000'
+            })
+
     def register_user(self, username, email, password, confirm_password):
         """Register user with dummy data"""
         return self.client().post(
-            '/api/v2/auth/register',
+            '/api/v2/auth/signup',
             content_type='application/json',
             data=json.dumps(dict(username=username, email=email,
                                  password=password, confirm_password=confirm_password)))
@@ -69,7 +89,7 @@ class BaseTests(unittest.TestCase):
     def register_user_wrong_content(self, username, email, password, confirm_password):
         """Register user with dummy data"""
         return self.client().post(
-            '/api/v2/auth/register',
+            '/api/v2/auth/signup',
             content_type='wrong',
             data=json.dumps(dict(username=username, email=email,
                                  password=password, confirm_password=confirm_password)))
@@ -135,6 +155,15 @@ class BaseTests(unittest.TestCase):
     def user_token_get(self):
         self.register_user('tester', 'test@gmail.com', 'test1234', 'test1234')
         data = self.login_user('test@gmail.com', 'test1234')
+        access_token = json.loads(data.decode())['access_token']
+        return access_token
+
+    def get_admin_token(self):
+        """Get user token"""
+        # email = os.getenv('ADMIN_EMAIL'),
+        # password = os.getenv('ADMIN_PASSWORD')
+        self.register_user('admin', 'admin@gmail.com', 'admin0987', 'admin0987')
+        data = self.login_user(email='admin@gmail.com', password='admin0987')
         access_token = json.loads(data.data.decode())['access_token']
         return access_token
 

@@ -1,8 +1,9 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request
 from flask.views import MethodView
 
 import app.api.common.responses as MealError
-from app.api.common.decorators import admin_required, user_required
+from app.api.common.decorators import admin_required
+from app.api.common.utils import Utils
 
 from app.api.v2.models.meal import Meal
 from app.api.common.responses import Response
@@ -14,10 +15,12 @@ meals = Blueprint('meals', __name__)
 class MealsView(MethodView):
     """Contains GET and POST methods"""
 
-    @user_required
     def get(self, menu_id):
         """Endpoint for fetching all meals."""
         results = []
+        # if not menu_id == int(menu_id):
+        #     # if Utils.url_id_valid(menu_id):
+        #     raise MealError.BadRequest('Invalid menu_id format! This should be an integer.')
         all_meals = Meal.list_all_meals()
         try:
             menu = Menu.find_by_id(menu_id)
@@ -34,7 +37,8 @@ class MealsView(MethodView):
         except MealError.NotFound as e:
             return e.message
 
-    def post(self, menu_id):
+    @admin_required
+    def post(self, menu_id, user_id):
         """Endpoint for adding a new meal."""
         data = request.get_json(force=True)
         name = data['name']
@@ -63,7 +67,8 @@ class MealsView(MethodView):
         except MealError.NotFound as e:
             return e.message
 
-    def delete(self, menu_id):
+    @admin_required
+    def delete(self, menu_id, user_id):
         """Endpoint for deleting all meals."""
         try:
             menu = Menu.find_by_id(menu_id)
@@ -97,7 +102,8 @@ class MealView(MethodView):
         except MealError.NotFound as e:
             return e.message
 
-    def put(self, menu_id, meal_id):
+    @admin_required
+    def put(self, menu_id, meal_id, user_id):
         """Endpoint for updating a particular meal."""
         try:
             menu = Menu.find_by_id(menu_id)
@@ -120,7 +126,8 @@ class MealView(MethodView):
         except MealError.NotFound as e:
             return e.message
 
-    def delete(self, menu_id, meal_id):
+    @admin_required
+    def delete(self, menu_id, meal_id, user_id):
         """Endpoint for deleting a particular order."""
         try:
             menu = Menu.find_by_id(menu_id)

@@ -1,7 +1,6 @@
 [![Build Status](https://travis-ci.org/mashafrancis/fast-food-fast-api.svg?)](https://travis-ci.org/mashafrancis/fast-food-fast-api)
-[![Coverage Status](https://coveralls.io/repos/github/mashafrancis/fast-food-fast-api/badge.svg?branch=ft-jwt-security-160785403)](https://coveralls.io/github/mashafrancis/fast-food-fast-api?branch=ft-jwt-security-160785403)
+[![Coverage Status](https://coveralls.io/repos/github/mashafrancis/fast-food-fast-api/badge.svg?branch=ch-api-documentation-160875132)](https://coveralls.io/github/mashafrancis/fast-food-fast-api?branch=ch-api-documentation-160875132)
 [![Maintainability](https://api.codeclimate.com/v1/badges/011428b399554183244c/maintainability)](https://codeclimate.com/github/mashafrancis/fast-food-fast-api/maintainability)
-[![Test Coverage](https://api.codeclimate.com/v1/badges/011428b399554183244c/test_coverage)](https://codeclimate.com/github/mashafrancis/fast-food-fast-api/test_coverage)
 
 # Fast-Food-Fast
 Fast-Food-Fast is a food delivery service app for a restaurant.
@@ -32,7 +31,7 @@ These instructions will get you a copy of the project up and running on your loc
 **Pytest** For testing
 
 ### Installation
-1. To clone this repo run ``https://github.com/mashafrancis/fast-food-fast/tree/master`` from your local terminal
+1. To clone this repo run ``https://github.com/mashafrancis/fast-food-fast-api/tree/master`` from your local terminal
 2. `git checkout develop` to use the develop branch
 3. Cd into the fast-food-fast Folder
 4. Create a virtual environment `python3 -m venv venv`
@@ -79,30 +78,39 @@ The endpoints can be tested using Postman
 The preferred JSON object to be returned by the API should be structured as follows:
 
 #### Users (For Authentication):
-(1). POST /v1/auth/register
+(1). POST /v2/auth/signup (All)
       
       
       "user_registration":
          {
             "username": "tester",
             "email": "test@gmail.com",
-            "password": "test1234",
-            "confirm_password": "test1234"
+            "password": "mrjunk1",
+            "confirm_password": "mrjunk1"
          }
 
-(2). POST /v1/auth/login
+(2). POST /v2/auth/login (All)
 
 
       "user_login":
          {
             "email": "test@gmail.com",
-            "password": "test1234"
+            "password": "mrjunk1"
          }
 
-#### Orders: 
-(3). GET /v1/orders - Get all orders
+#### Users
+(3). GET /v2/users - Get all users (Admin)
 
-(4). POST /v1/orders - Create a new order
+(4). GET /v2/users/{{user_id}} - Get a single user by user_id (Admin)
+
+(5). POST /v2/users/orders - Post a single order (User)
+
+(6). GET /v2/users/orders - Get all order history (User)
+
+#### Orders: 
+(7). GET /v2/orders - Get all orders (Admin)
+
+(8). POST /v2/orders - Create a new order (All and non-registered)
 
 
       "order":
@@ -112,27 +120,75 @@ The preferred JSON object to be returned by the API should be structured as foll
             "price": 1000
          }
          
-(5). DELETE /v1/orders - Delete all orders
+(9). DELETE /v2/orders - Delete all orders (Admin)
 
-(6). GET /v1/orders/1 - Get an order by order_id
+(10). GET /v2/orders/{{order_id}} - Get an order by order_id (Admin)
 
-(7). PUT /v1/orders/1 - Edit an existing order
-
-    "order":
-         {
-            "name": "Fries",
-            "quantity": 2,
-            "price": 200
-         }
-         
-(8). PATCH /v1/orders/1 - Update status of a particular order
+(11). PUT /v2/orders/{{order_id}} - Edit an existing order (Admin)
 
     "order":
+       {
+          "status": "Pending" or "Accepted" or "Declined"
+       }
+         
+         
+(13). DELETE /v2/orders/{{order_id}} - Delete an existing order by order_id
+
+#### Menu
+(14). GET /v2/menu - Get all menu (All)
+
+(15). POST /v2/menu - Create a new menu (Admin)
+
+      "menu_id 1":
          {
-            "status": "Completed",
+            "name": "Breakfast",
+            "description": "Get your Breakfast!"
          }
          
-(9). DELETE /v1/orders/1 - Delete an existing order by order_id
+(16). DELETE /v2/menu - Delete all menu categories (Admin)
+
+(17). GET /v2/menu/{{menu_id}} - Get all menu category items by its menu_id (All)
+
+(18). PUT /v2/menu/{{menu_id}} - Edit an existing menu category (Admin)
+
+    "menu_id 2":
+         {
+            "name": "Breakfast-2",
+            "description": "Get your Breakfast-2!"
+         }
+         
+         
+(19). DELETE /v2/menu/{{menu_id}} - Delete an existing menu by menu_id (Admin)
+
+#### Meal
+(20). GET /v2/menu/{{menu_id}}/meals - Get all meals offered (All)
+
+(21). POST /v2/menu/{{menu_id}}/meals - Offer a new meal (Admin)
+
+      "meal_id 1":
+         {
+            "name":"Junk",
+            "description": "Get your junk!",
+            "price": "100"
+         }
+         
+(22). DELETE /v2/menu{{menu_id}}/meals - Delete all meals offered (Admin)
+
+(23). GET /v2/menu/{{menu_id}}/meals/{{meal_id}} - Get a single meal offered (All)
+
+(24). PUT /v2/menu/{{menu_id}}/meal/{{meal_id}} - Edit an existing meal (Admin)
+
+    "meal_id 1":
+         {
+            "name":"Junk-1",
+            "description": "Get your junk-1!",
+            "price": "200"
+         }
+         
+         
+(25). DELETE /v2/menu/{{menu_id}}/meals/{{meal_id}} - Delete an existing meal by its meal_id (Admin)
+
+
  
 
 
@@ -141,8 +197,13 @@ Most recent version: Version 2
 
 ## Documentation Links
 
-#### Frontend Templates
+### Frontend Templates
 [Github Pages](https://mashafrancis.github.io/fast-food-fast/)
+
+### Run in Postman
+[![Run in Postman](https://run.pstmn.io/button.svg)](postman://app/collections/import/1082100-037e53da-021e-4607-bcfe-082a7f3be688-RWgnWL3R?referrer=https%3A%2F%2Fdocumenter.getpostman.com%2Fview%2F1082100%2FRWgnWL3R#?)
+
+View in browser [here](https://documenter.getpostman.com/view/1082100/RWgnWL3R)
 
 ## Author
 * [Francis Masha](https://github.com/mashafrancis)

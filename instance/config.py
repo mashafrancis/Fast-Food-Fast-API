@@ -8,6 +8,7 @@ class Config(object):
     CSRF_ENABLED = True
     SECRET = os.getenv('SECRET') or 'you-will-never-guess-me'
     FAST_FOOD_ADMIN = os.environ.get('ADMIN_EMAIL')
+    TEST_ADMIN = os.getenv('TEST_ADMIN_EMAIL')
     DATABASE_URL = os.getenv('DATABASE_URL')
 
     @staticmethod

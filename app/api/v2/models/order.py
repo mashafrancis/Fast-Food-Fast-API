@@ -1,15 +1,18 @@
 from datetime import datetime
 
+from app.api.v2.models.meal import Meal
 from app.database.database import Database
 
 
 class Orders:
-    def __init__(self, name, quantity, price):
+    def __init__(self, name, quantity, price, user_id):
         self.name = name
         self.quantity = quantity
         self.price = price
+        self.user_id = user_id
         self.date_created = datetime.now()
-        self.status = 'Pending'
+        self.status = 'Pending',
+        self.meal_total = (int(self.price) * int(self.quantity))
 
     def __repr__(self):
         return repr(self.name)
@@ -25,10 +28,14 @@ class Orders:
 
     def save(self):
         """Method saves an order to the table"""
+        meal_id = Meal.find_by_name(self.name)[0]
+        ordered_id = 1
 
-        data = [self.name, self.quantity, self.price, self.date_created]
-        query = """INSERT INTO orders (name, quantity, price, date_created) 
-                                VALUES (%s, %s, %s, %s) RETURNING id"""
+        data = [self.user_id, ordered_id, meal_id, self.name, self.quantity,
+                self.price, self.date_created, self.meal_total]
+        query = """INSERT INTO orders (user_id, order_id, meal_id, name, 
+                                        quantity, price, date_created, meal_total) 
+                                VALUES (%s, %s, %s, %s, %s, %s, %s, %s) RETURNING id"""
         Database.insert(query, data)
 
     @staticmethod
@@ -75,3 +82,19 @@ class Orders:
         query = """SELECT * FROM orders WHERE id = %(id)s"""
         data = {'id': order_id}
         return Database.find_one(query, data)
+
+    @staticmethod
+    def find_meal_by_its_id(meal_id):
+        """Method finds an order by it's order_id"""
+
+        query = """SELECT * FROM orders WHERE meal_id = %(meal_id)s"""
+        data = {'meal_id': meal_id}
+        return Database.find_one(query, data)
+
+    @staticmethod
+    def find_orders_by_user_id(user_id):
+        """Method finds an order by it's order_id"""
+
+        query = """SELECT * FROM orders WHERE user_id = '%s'""" % user_id
+        # data = {'id': user_id}
+        return Database.find_all(query)

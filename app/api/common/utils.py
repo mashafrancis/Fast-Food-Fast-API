@@ -2,6 +2,7 @@ import re
 import time
 
 from werkzeug.security import generate_password_hash, check_password_hash
+import app.api.common.responses as Errors
 
 
 class Utils:
@@ -22,13 +23,9 @@ class Utils:
 
     @staticmethod
     def name_checker(name):
-        name_checker = re.match(r"(?=^.{4,}$)(?=.*[a-z])^[A-Za-z0-9_-]+( +[A-Za-z0-9_-]+)*$", name)
+        # name_checker = re.match(r"(?=^.{4,}$)(?=.*[a-z])^[A-Za-z0-9_-]+( +[A-Za-z0-9_-]+)*$", name)
+        name_checker = re.match(r"^[a-zA-Z_ ]+$", name)
         return True if name_checker else False
-
-    @staticmethod
-    def timestamp():
-        """Return the current timestamp as an integer."""
-        return int(time.time())
 
     @staticmethod
     def hash_password(password):
@@ -37,7 +34,7 @@ class Utils:
         :param password: The sha512 password from the login/register form
         :return: A sha512 -> pbkdf2_sha512 encrypted password
         """
-        return generate_password_hash(password, method='pbkdf2:sha256', salt_length=8)
+        return generate_password_hash(password)
 
     @staticmethod
     def check_hashed_password(password, hashed_password):
@@ -49,3 +46,10 @@ class Utils:
         :return: True if passwords match, False otherwise
         """
         return check_password_hash(hashed_password, password)
+
+    @staticmethod
+    def url_id_valid(url_id):
+        """Check url id parameter to be a valid number"""
+        url_id_checker = re.match(r"^[1-9][0-9]*$", url_id)
+        return True if url_id_checker else False
+

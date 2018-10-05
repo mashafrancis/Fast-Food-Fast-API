@@ -27,8 +27,7 @@ class User:
         return {
             'username': self.username,
             'email': self.email,
-            'password': self.password,
-            'role': self.role
+            'password': self.password
         }
 
     def save(self):
@@ -39,11 +38,12 @@ class User:
         data = [self.username, self.email, self.password, 'now', self.role]
         query = """INSERT INTO users (username, email, password_hash, date_registered, user_role) 
                     VALUES (%s, %s, %s, %s, %s) RETURNING id"""
-        Database.insert(query, data)
+        return Database.insert(query, data)
 
     @staticmethod
     def list_all_users():
-        pass
+        query = """SELECT * FROM users"""
+        return Database.find_all(query)
 
     @staticmethod
     def fetch_email(email):
@@ -56,6 +56,13 @@ class User:
     def fetch_email_by_id(user_id):
         """Method to search with user email"""
         query = """SELECT email FROM users WHERE id = '%s'""" % user_id
+        # data = {'id': user_id}
+        return Database.return_one(query)
+
+    @staticmethod
+    def fetch_username_by_id(user_id):
+        """Method to search with user email"""
+        query = """SELECT username FROM users WHERE id = '%s'""" % user_id
         # data = {'id': user_id}
         return Database.return_one(query)
 
@@ -73,9 +80,9 @@ class User:
         return Database.return_one(query)
 
     @staticmethod
-    def fetch_role(email):
+    def fetch_role(user_id):
         """Method to return the user's role"""
-        query = """SELECT user_role FROM users WHERE email='%s'""" % email
+        query = """SELECT user_role FROM users WHERE id='%s'""" % user_id
         # data = (email,)
         # query = """SELECT user_role FROM users WHERE email = %s"""
         # data = (email,)
@@ -110,17 +117,18 @@ class User:
         :return: string
         """
         try:
+            role = User.fetch_role(user_id=user_id)
             payload = {
-                'exp': datetime.utcnow() + timedelta(minutes=60),
+                'exp': datetime.utcnow() + timedelta(minutes=600),
                 'iat': datetime.utcnow(),
-                'sub': user_id
+                'user_id': user_id,
+                'role': role[0]
             }
             # create byte string token using payload and secret key
             jwt_string = jwt.encode(
                 payload,
                 current_app.config['SECRET'],
-                algorithm='HS256'
-            )
+                algorithm='HS256')
             return jwt_string
         except Exception as e:
             return str(e)
@@ -134,11 +142,14 @@ class User:
         """
         try:
             payload = jwt.decode(access_token, current_app.config['SECRET'])
-            return payload['sub']
+            # blacklisted_token = BlackList.check_token(access_token)
+            # if blacklisted_token:
+            #     return "Kindly login to perform action."
+            return payload
         except jwt.ExpiredSignatureError:
-            return "Signature Expired. Please login!"
+            raise UserErrors.Unauthorized("Signature Expired. Please login!")
         except jwt.InvalidTokenError:
-            return "Invalid Token. Please Register or Login"
+            raise UserErrors.Unauthorized("Invalid Token. Please Register or Login")
 
     @staticmethod
     def validate_register_details(email, username, password, confirm_password):
@@ -152,14 +163,16 @@ class User:
         :return: True if registered successfully, or False otherwise
         """
         if email and username and password and confirm_password:
-            if not Utils.email_is_valid(email):
-                raise UserErrors.BadRequest("Your email is invalid! "
-                                            "Kindly provide use with the right email address format")
+            if username == "   ":
+                raise UserErrors.BadRequest("Cannot complete because you have white spaces on the username field!")
             if not Utils.username_checker(username):
                 raise UserErrors.BadRequest("Username must contain at least letter; "
                                             "plus other letters or digits and with a min length of 3")
             if User.find_by_username(username):
                 raise UserErrors.Conflict('Username already exists! Kindly choose another.')
+            if not Utils.email_is_valid(email):
+                raise UserErrors.BadRequest("Your email is invalid! "
+                                            "Kindly provide use with the right email address format")
             if not Utils.password_checker(password):
                 raise UserErrors.BadRequest("Password must contain: "
                                             "lowercase letters, atleast a digit, and a min-length of 6")
