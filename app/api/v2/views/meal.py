@@ -15,12 +15,12 @@ meals = Blueprint('meals', __name__)
 class MealsView(MethodView):
     """Contains GET and POST methods"""
 
-    @admin_required
-    def get(self, menu_id, user_id):
+    def get(self, menu_id):
         """Endpoint for fetching all meals."""
         results = []
-        if Utils.url_id_valid(menu_id):
-            return 'Valid'
+        # if not menu_id == int(menu_id):
+        #     # if Utils.url_id_valid(menu_id):
+        #     raise MealError.BadRequest('Invalid menu_id format! This should be an integer.')
         all_meals = Meal.list_all_meals()
         try:
             menu = Menu.find_by_id(menu_id)
@@ -87,8 +87,7 @@ class MealsView(MethodView):
 class MealView(MethodView):
     """Contains GET, PUT and DELETE methods for manipulating a single meal"""
 
-    @admin_required
-    def get(self, menu_id, meal_id, user_id):
+    def get(self, menu_id, meal_id):
         """Endpoint for fetching a particular order."""
         try:
             menu = Menu.find_by_id(menu_id)
