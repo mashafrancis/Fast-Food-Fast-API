@@ -16,7 +16,7 @@ def create_app(config_name):
     with app.app_context():
         create_tables()
 
-    swagger_url = '/api/v2/doc'
+    swagger_url = '/api/v2/docs/'
     api_url = 'swagger_doc.yml'
 
     swaggerui_blueprint = get_swaggerui_blueprint(swagger_url, api_url)
