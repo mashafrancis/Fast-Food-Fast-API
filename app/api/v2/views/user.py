@@ -1,8 +1,9 @@
-from flask import Blueprint, request
+from flask import Blueprint, request, make_response, jsonify
 from flask.views import MethodView
 
 from app.api.common.decorators import user_required, admin_required
 from app.api.common.responses import Response
+from app.api.common.utils import Utils
 from app.api.v2.models.meal import Meal
 from app.api.v2.models.order import Orders
 from app.api.v2.models.user import User
@@ -71,6 +72,9 @@ class UserOrdersView(MethodView):
         meal_id = data['meal_id']
         quantity = data['quantity']
 
+        # if Utils.valid_positive_integers(quantity):
+        #     raise Error.ForbiddenAction('Cannot add a negative or null quantity!')
+
         meal = Meal.find_by_id(meal_id)
         ordered_meal = Orders.find_meal_by_its_id(meal_id)
         try:
@@ -84,6 +88,9 @@ class UserOrdersView(MethodView):
                 if ordered_meal is True:
                     Orders.find_orders_by_user_id(user_id)
 
+            if Utils.valid_positive_integers(quantity):
+                raise Error.BadRequest('You cannot add a negative or null quantity!')
+
             order = Orders(user_id=user_id[0],
                            name=name,
                            quantity=quantity,
@@ -91,6 +98,8 @@ class UserOrdersView(MethodView):
 
             order.save()
             return Response.create_resource('Order has been placed successfully.')
+        except Error.BadRequest as e:
+            return e.message
         except Error.Conflict as e:
             return e.message
         except Error.NotFound as e:

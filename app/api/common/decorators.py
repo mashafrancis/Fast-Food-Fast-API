@@ -1,10 +1,9 @@
 from functools import wraps
 
-from flask import request, make_response, jsonify
+from flask import request
 
-from app.api.v2.models.blacklist import BlackList
-from app.api.v2.models.user import User
 import app.api.common.responses as Errors
+from app.api.v2.models.user import User
 
 
 def user_required(f):
@@ -28,7 +27,7 @@ def user_required(f):
             return e.message
         except Errors.Unauthorized as e:
             return e.message
-        return f(user_id=user_id, *args, **kwargs)
+        return f(*args, **kwargs, user_id=user_id)
     return decorated
 
 
