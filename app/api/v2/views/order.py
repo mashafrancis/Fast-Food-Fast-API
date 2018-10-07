@@ -1,4 +1,4 @@
-from flask import request, jsonify, Blueprint
+from flask import request, jsonify, Blueprint, make_response
 from flask.views import MethodView
 
 import app.api.common.responses as Error
@@ -121,9 +121,9 @@ class OrderView(MethodView):
     @admin_required
     def put(self, order_id, user_id):
         """Endpoint for updating a particular order."""
-        order = Orders.find_by_id(order_id)
-        data = request.get_json(force=True)
         try:
+            order = Orders.find_by_id(order_id)
+            data = request.get_json(force=True)
             if not order:
                 raise Error.NotFound("Sorry, Order No {} doesn't exist yet! Create one.".format(order_id))
             else:
@@ -133,6 +133,9 @@ class OrderView(MethodView):
                 return jsonify({'order': 'Order has been updated'}, 200)
         except Error.NotFound as e:
             return e.message
+        except Exception as error:
+            return make_response(jsonify(
+                {"error": "Please provide for missing field: " + str(error)}), 400)
 
     @admin_required
     def delete(self, order_id, user_id):

@@ -68,16 +68,20 @@ class UserOrdersView(MethodView):
     @user_required
     def post(self, user_id):
         """Endpoint for adding a new order."""
-        data = request.get_json(force=True)
-        meal_id = data['meal_id']
-        quantity = data['quantity']
-
-        # if Utils.valid_positive_integers(quantity):
-        #     raise Error.ForbiddenAction('Cannot add a negative or null quantity!')
-
-        meal = Meal.find_by_id(meal_id)
-        ordered_meal = Orders.find_meal_by_its_id(meal_id)
         try:
+            data = request.get_json(force=True)
+            meal_id = data['meal_id']
+            quantity = data['quantity']
+
+            # if not data:
+            #     raise SystemError
+            if Utils.valid_positive_integers(meal_id):
+                raise Error.BadRequest('You cannot add a negative or null meal_id!')
+            if Utils.valid_positive_integers(quantity):
+                raise Error.BadRequest('You cannot add a negative or null quantity!')
+
+            meal = Meal.find_by_id(meal_id)
+            ordered_meal = Orders.find_meal_by_its_id(meal_id)
             if not meal:
                 raise Error.NotFound('Meal not available')
             elif ordered_meal:
@@ -87,9 +91,6 @@ class UserOrdersView(MethodView):
                 price = meal[4]
                 if ordered_meal is True:
                     Orders.find_orders_by_user_id(user_id)
-
-            if Utils.valid_positive_integers(quantity):
-                raise Error.BadRequest('You cannot add a negative or null quantity!')
 
             order = Orders(user_id=user_id[0],
                            name=name,
@@ -104,6 +105,9 @@ class UserOrdersView(MethodView):
             return e.message
         except Error.NotFound as e:
             return e.message
+        except Exception as error:
+            return make_response(jsonify(
+                {"error": "Please provide for all the fields. Missing field: " + str(error)}), 400)
 
     @user_required
     def delete(self, user_id):

@@ -1,11 +1,10 @@
-from flask import request, Blueprint, jsonify
+from flask import request, Blueprint, jsonify, make_response
 from flask.views import MethodView
 
 import app.api.common.responses as MenuError
 from app.api.common.decorators import admin_required
-
-from app.api.v2.models.menu import Menu
 from app.api.common.responses import Response
+from app.api.v2.models.menu import Menu
 
 menu = Blueprint('menu', __name__)
 
@@ -16,11 +15,11 @@ class MenuView(MethodView):
     @admin_required
     def post(self, user_id):
         """Endpoint for adding a new menu category."""
-        data = request.get_json(force=True)
-        name = data['name']
-        description = data['description']
-
         try:
+            data = request.get_json(force=True)
+            name = data['name']
+            description = data['description']
+
             Menu.validate_menu_details(name, description)
             menu_name = Menu.find_by_name(name)
             if not menu_name:
@@ -34,6 +33,9 @@ class MenuView(MethodView):
             return e.message
         except MenuError.BadRequest as e:
             return e.message
+        except Exception as error:
+            return make_response(jsonify(
+                {"error": "Please provide for all the fields. Missing field: " + str(error)}), 400)
 
     def get(self):
         """Endpoint for fetching all menu categories."""
@@ -69,6 +71,8 @@ class MenuIdView(MethodView):
     def get(self, menu_id):
         """Endpoint for fetching a particular order."""
         try:
+            # if Utils.valid_positive_integers(menu_id):
+            #     raise MenuError.BadRequest('You cannot have a negative or null menu_id!')
             menu_name = Menu.find_by_id(menu_id)
             if not menu_name:
                 raise MenuError.NotFound("Sorry, Menu does't exist!")
@@ -80,9 +84,11 @@ class MenuIdView(MethodView):
     @admin_required
     def put(self, menu_id, user_id):
         """Endpoint for updating a particular order."""
-        menu_name = Menu.find_by_id(menu_id)
-        data = request.get_json(force=True)
         try:
+            menu_name = Menu.find_by_id(menu_id)
+            if not menu_name:
+                raise MenuError.BadRequest('Menu Name not posted!')
+            data = request.get_json(force=True)
             if not menu_name:
                 raise MenuError.NotFound("Sorry, Menu does't exist! Create one?")
             else:
@@ -96,6 +102,9 @@ class MenuIdView(MethodView):
             return e.message
         except MenuError.BadRequest as e:
             return e.message
+        except Exception as error:
+            return make_response(jsonify(
+                {"error": "Please provide for the missing field. Missing field: " + str(error)}), 400)
 
     @admin_required
     def delete(self, menu_id, user_id):

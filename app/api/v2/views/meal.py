@@ -1,4 +1,4 @@
-from flask import Blueprint, request
+from flask import Blueprint, request, make_response, jsonify
 from flask.views import MethodView
 
 import app.api.common.responses as MealError
@@ -66,6 +66,9 @@ class MealsView(MethodView):
             return e.message
         except MealError.NotFound as e:
             return e.message
+        except Exception as error:
+            return make_response(jsonify(
+                {"error": "Please provide for all the fields. Missing field: " + str(error)}), 400)
 
     @admin_required
     def delete(self, menu_id, user_id):
@@ -125,6 +128,9 @@ class MealView(MethodView):
                 return Response.complete_request(obj)
         except MealError.NotFound as e:
             return e.message
+        except Exception as error:
+            return make_response(jsonify(
+                {"error": "Please provide for all the fields. Missing field: " + str(error)}), 400)
 
     @admin_required
     def delete(self, menu_id, meal_id, user_id):

@@ -1,4 +1,4 @@
-from flask import request, Blueprint, jsonify
+from flask import request, Blueprint, jsonify, make_response
 from flask.views import MethodView
 
 import app.api.common.responses as UserErrors
@@ -41,6 +41,9 @@ class RegistrationView(MethodView):
             return e.message
         except UserErrors.Conflict as e:
             return e.message
+        except Exception as error:
+            return make_response(jsonify(
+                {"error": "Please provide for all the fields. Missing field: " + str(error)}), 400)
 
 
 class LoginView(MethodView):
@@ -84,6 +87,9 @@ class LoginView(MethodView):
             return e.message
         except UserErrors.Unauthorized as e:
             return e.message
+        except Exception as error:
+            return make_response(jsonify(
+                {"error": "Please provide for all the fields. Missing field: " + str(error)}), 400)
 
 
 class LogoutView(MethodView):
