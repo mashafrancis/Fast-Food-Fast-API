@@ -2,11 +2,9 @@ from flask import request, Blueprint, jsonify, make_response
 from flask.views import MethodView
 
 import app.api.common.responses as UserErrors
-from app.api.v2.models.blacklist import BlackList
-
-from app.api.v2.models.user import User
-from app.api.common.utils import Utils
 from app.api.common.responses import AuthResponse
+from app.api.common.utils import Utils
+from app.api.v2.models.user import User
 
 auth = Blueprint('auth', __name__)
 
