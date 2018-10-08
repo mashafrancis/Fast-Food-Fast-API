@@ -86,8 +86,6 @@ class MenuIdView(MethodView):
         """Endpoint for updating a particular order."""
         try:
             menu_name = Menu.find_by_id(menu_id)
-            if not menu_name:
-                raise MenuError.BadRequest('Menu Name not posted!')
             data = request.get_json(force=True)
             if not menu_name:
                 raise MenuError.NotFound("Sorry, Menu does't exist! Create one?")

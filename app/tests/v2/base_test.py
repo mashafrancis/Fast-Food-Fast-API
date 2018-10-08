@@ -29,7 +29,7 @@ class BaseTests(unittest.TestCase):
             })
 
             self.order2 = json.dumps({
-                'name': 'Burger-2',
+                'name': 'Burger2',
                 'quantity': '20',
                 'price': '2000',
                 'created_by': 'Test',
@@ -37,8 +37,8 @@ class BaseTests(unittest.TestCase):
             })
 
             self.order3 = json.dumps({
-                'meal_id': '1',
-                'quantity': '2'
+                'meal_id': 1,
+                'quantity': 2
             })
 
             self.order4 = json.dumps({
@@ -56,8 +56,8 @@ class BaseTests(unittest.TestCase):
             })
 
             self.menu2 = json.dumps({
-                'name': 'Drinks-2',
-                'description': 'Get your drinks-2!'
+                'name': 'Drink2',
+                'description': 'Get your drinks2!'
             })
 
             self.meal = json.dumps({
@@ -67,14 +67,14 @@ class BaseTests(unittest.TestCase):
             })
 
             self.meal2 = json.dumps({
-                'name': 'Burger-2',
-                'description': 'Get your burger-2!',
+                'name': 'Salad',
+                'description': 'Get your salad!',
                 'price': '1000'
             })
 
             self.meal3 = json.dumps({
-                'name': 'Burger-3',
-                'description': 'Get your burger-3!',
+                'name': 'Fries',
+                'description': 'Get your fries!',
                 'price': '1000'
             })
 
@@ -148,6 +148,12 @@ class BaseTests(unittest.TestCase):
 
     def create_menu(self, token):
         response = self.client().post('/api/v2/menu', data=self.menu,
+                                      content_type='application/json',
+                                      headers=dict(Authorization="Bearer " + token))
+        self.assertEqual(response.status_code, 201)
+
+    def create_meal(self, token):
+        response = self.client().post('/api/v2/menu/1/meals', data=self.meal,
                                       content_type='application/json',
                                       headers=dict(Authorization="Bearer " + token))
         self.assertEqual(response.status_code, 201)

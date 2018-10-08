@@ -30,7 +30,8 @@ class AuthTest(BaseTests):
             self.assertNotEqual(response.status_code, 200)
 
     def test_user_duplicate_registration(self):
-            """Test unsuccessful registration due to duplicate email."""
+        """Test unsuccessful registration due to duplicate email."""
+        with self.client():
             self.register_user('tester', 'test@gmail.com', 'test1234', 'test1234')
             response = self.register_user('tester1', 'test@gmail.com', 'test1234', 'test1234')
             data = json.loads(response.data.decode())
@@ -39,7 +40,8 @@ class AuthTest(BaseTests):
             self.assertEqual(response.status_code, 409)
 
     def test_duplicate_username(self):
-            """Test unsuccessful registration due to duplicate username."""
+        """Test unsuccessful registration due to duplicate username."""
+        with self.client():
             self.register_user('tester', 'test@gmail.com', 'test1234', 'test1234')
             response = self.register_user('tester', 'test1@gmail.com', 'test1234', 'test1234')
             data = json.loads(response.data.decode())
@@ -48,7 +50,8 @@ class AuthTest(BaseTests):
             self.assertEqual(response.status_code, 409)
 
     def test_user_login(self):
-            """Test user successful login"""
+        """Test user successful login"""
+        with self.client():
             self.register_user('tester', 'test@gmail.com', 'test1234', 'test1234')
             response = self.login_user('test@gmail.com', 'test1234')
             data = json.loads(response.data.decode())
@@ -59,7 +62,8 @@ class AuthTest(BaseTests):
             self.assertEqual(response.status_code, 200)
 
     def test_invalid_login_password(self):
-            """Test unsuccessful registration due to invalid login password."""
+        """Test unsuccessful registration due to invalid login password."""
+        with self.client():
             self.register_user('tester', 'test@gmail.com', 'test1234', 'test1234')
             response = self.login_user('test@gmail.com', 'test')
             data = json.loads(response.data.decode())
@@ -68,7 +72,8 @@ class AuthTest(BaseTests):
             self.assertTrue(data['message'] == 'Wrong Password!')
 
     def test_missing_password(self):
-            """Test unsuccessful registration due to missing password"""
+        """Test unsuccessful registration due to missing password"""
+        with self.client():
             self.register_user('tester', 'test@gmail.com', 'test1234', 'test1234')
             response = self.login_user('test@gmail.com', '')
             data = json.loads(response.data.decode())
@@ -78,7 +83,8 @@ class AuthTest(BaseTests):
             self.assertTrue(data['message'] == 'Your password is missing!')
 
     def test_missing_email(self):
-            """Test unsuccessful registration due to missing email"""
+        """Test unsuccessful registration due to missing email"""
+        with self.client():
             self.register_user('tester', 'test@gmail.com', 'test1234', 'test1234')
             response = self.login_user('', 'test1234')
             data = json.loads(response.data.decode())

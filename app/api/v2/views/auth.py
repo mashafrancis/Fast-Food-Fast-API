@@ -13,7 +13,7 @@ class RegistrationView(MethodView):
     """This class-based view registers a new user and fetches all user."""
 
     def post(self):
-        """API POST Requests for this view. Url ---> /v1/auth/register"""
+        """API POST Requests for this view. Url ---> /v2/auth/signup"""
         try:
             if request.content_type == 'application/json':
                 data = request.get_json(force=True)
@@ -48,7 +48,7 @@ class LoginView(MethodView):
     """This class-based view handles user login and access token generation"""
 
     def post(self):
-        """API POST Requests for this view. Url ---> /v1/auth/login"""
+        """API POST Requests for this view. Url ---> /v2/auth/login"""
         try:
             if request.content_type == 'application/json':
                 data = request.get_json(force=True)
