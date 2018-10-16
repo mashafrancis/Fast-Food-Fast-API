@@ -1,13 +1,10 @@
-from flask import request, jsonify, Blueprint
+from flask import request, jsonify, Blueprint, make_response
 from flask.views import MethodView
 
 import app.api.common.responses as Error
-from app.api.common.decorators import user_required, admin_required
-from app.api.common.utils import Utils
-from app.api.v2.models.meal import Meal
-
-from app.api.v2.models.order import Orders
+from app.api.common.decorators import admin_required
 from app.api.common.responses import Response
+from app.api.v2.models.order import Orders
 from app.api.v2.models.user import User
 
 orders = Blueprint('order', __name__)
@@ -42,9 +39,9 @@ class OrdersView(MethodView):
     #     ordered_meal = Orders.find_meal_by_its_id(meal_id)
     #     try:
     #         if not meal:
-    #             raise OrderError.NotFound('Meal not available')
+    #             raise Error.NotFound('Meal not available')
     #         elif ordered_meal:
-    #             raise OrderError.Conflict('Meal already exists. Do you want to update the meal item quantity?')
+    #             raise Error.Conflict('Meal already exists. Do you want to update the meal item quantity?')
     #         else:
     #             name = meal[2]
     #             price = meal[4]
@@ -58,9 +55,9 @@ class OrdersView(MethodView):
     #
     #         order.save()
     #         return Response.create_resource('Order has been placed successfully.')
-    #     except OrderError.Conflict as e:
+    #     except Error.Conflict as e:
     #         return e.message
-    #     except OrderError.NotFound as e:
+    #     except Error.NotFound as e:
     #         return e.message
 
     @admin_required
@@ -124,9 +121,9 @@ class OrderView(MethodView):
     @admin_required
     def put(self, order_id, user_id):
         """Endpoint for updating a particular order."""
-        order = Orders.find_by_id(order_id)
-        data = request.get_json(force=True)
         try:
+            order = Orders.find_by_id(order_id)
+            data = request.get_json(force=True)
             if not order:
                 raise Error.NotFound("Sorry, Order No {} doesn't exist yet! Create one.".format(order_id))
             else:
@@ -136,6 +133,9 @@ class OrderView(MethodView):
                 return jsonify({'order': 'Order has been updated'}, 200)
         except Error.NotFound as e:
             return e.message
+        except Exception as error:
+            return make_response(jsonify(
+                {"error": "Please provide for missing field: " + str(error)}), 400)
 
     @admin_required
     def delete(self, order_id, user_id):

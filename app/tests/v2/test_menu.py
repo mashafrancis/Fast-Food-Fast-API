@@ -98,7 +98,7 @@ class MenuTests(BaseTests):
         """Test updating an menu that does not exist"""
         access_token = self.get_admin_token()
 
-        response = self.client().put('/api/v2/menu/100', data=self.menu2,
+        response = self.client().put('/api/v2/menu/1000', data=self.menu,
                                      content_type='application/json',
                                      headers=dict(Authorization="Bearer " + access_token))
         self.assertEqual(response.status_code, 404)

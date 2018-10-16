@@ -117,3 +117,9 @@ class Conflict(Exception):
     def __init__(self, message):
         self.message = make_response(jsonify({"status": "Conflict",
                                               "message": message}), 409)
+
+
+class InternalServerError(Exception):
+    def __init__(self, message):
+        self.message = make_response(jsonify({"status": "Internal Server Error",
+                                             "message": message}), 500)

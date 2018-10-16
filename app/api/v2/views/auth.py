@@ -1,12 +1,10 @@
-from flask import request, Blueprint, jsonify
+from flask import request, Blueprint, jsonify, make_response
 from flask.views import MethodView
 
 import app.api.common.responses as UserErrors
-from app.api.v2.models.blacklist import BlackList
-
-from app.api.v2.models.user import User
-from app.api.common.utils import Utils
 from app.api.common.responses import AuthResponse
+from app.api.common.utils import Utils
+from app.api.v2.models.user import User
 
 auth = Blueprint('auth', __name__)
 
@@ -15,7 +13,7 @@ class RegistrationView(MethodView):
     """This class-based view registers a new user and fetches all user."""
 
     def post(self):
-        """API POST Requests for this view. Url ---> /v1/auth/register"""
+        """API POST Requests for this view. Url ---> /v2/auth/signup"""
         try:
             if request.content_type == 'application/json':
                 data = request.get_json(force=True)
@@ -41,13 +39,16 @@ class RegistrationView(MethodView):
             return e.message
         except UserErrors.Conflict as e:
             return e.message
+        except Exception as error:
+            return make_response(jsonify(
+                {"error": "Please provide for all the fields. Missing field: " + str(error)}), 400)
 
 
 class LoginView(MethodView):
     """This class-based view handles user login and access token generation"""
 
     def post(self):
-        """API POST Requests for this view. Url ---> /v1/auth/login"""
+        """API POST Requests for this view. Url ---> /v2/auth/login"""
         try:
             if request.content_type == 'application/json':
                 data = request.get_json(force=True)
@@ -84,6 +85,9 @@ class LoginView(MethodView):
             return e.message
         except UserErrors.Unauthorized as e:
             return e.message
+        except Exception as error:
+            return make_response(jsonify(
+                {"error": "Please provide for all the fields. Missing field: " + str(error)}), 400)
 
 
 class LogoutView(MethodView):

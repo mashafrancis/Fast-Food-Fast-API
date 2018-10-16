@@ -1,6 +1,5 @@
 from flask import Flask
 from flask_cors import CORS
-from flask_heroku import Heroku
 
 from app.database.tables import create_tables
 from instance.config import app_config
@@ -17,9 +16,7 @@ def create_app(config_name):
     with app.app_context():
         create_tables()
 
-    heroku = Heroku(app)
-
-    swagger_url = '/api/v2/docs'
+    swagger_url = '/api/v2/documents/'
     api_url = 'swagger_doc.yml'
 
     swaggerui_blueprint = get_swaggerui_blueprint(swagger_url, api_url)

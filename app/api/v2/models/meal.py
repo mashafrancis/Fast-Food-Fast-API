@@ -91,7 +91,7 @@ class Meal:
         """
         if name and description:
             if not Utils.name_checker(name):
-                raise MealError.BadRequest('Invalid name!')
+                raise MealError.BadRequest('Invalid meal name! This must have at least 3 characters.')
 
         else:
             if not name:

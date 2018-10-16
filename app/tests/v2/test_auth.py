@@ -29,51 +29,69 @@ class AuthTest(BaseTests):
             self.assertEqual(response.status_code, 201)
             self.assertNotEqual(response.status_code, 200)
 
-            # Test duplicate registration
-            response2 = self.register_user('tester1', 'test@gmail.com', 'test1234', 'test1234')
-            data2 = json.loads(response2.data.decode())
-            self.assertTrue(data2['status'] == 'Conflict')
-            self.assertTrue(data2['message'] == 'User already exists! Please login.')
-            self.assertEqual(response2.status_code, 409)
+    def test_user_duplicate_registration(self):
+        """Test unsuccessful registration due to duplicate email."""
+        with self.client():
+            self.register_user('tester', 'test@gmail.com', 'test1234', 'test1234')
+            response = self.register_user('tester1', 'test@gmail.com', 'test1234', 'test1234')
+            data = json.loads(response.data.decode())
+            self.assertTrue(data['status'] == 'Conflict')
+            self.assertEqual(data['message'], u'User already exists! Please login.')
+            self.assertEqual(response.status_code, 409)
 
-            # Test duplicate username
-            response3 = self.register_user('tester', 'test1@gmail.com', 'test1234', 'test1234')
-            data3 = json.loads(response3.data.decode())
-            self.assertTrue(data3['status'] == 'Conflict')
-            self.assertTrue(data3['message'] == 'Username already exists! Kindly choose another.')
-            self.assertEqual(response3.status_code, 409)
+    def test_duplicate_username(self):
+        """Test unsuccessful registration due to duplicate username."""
+        with self.client():
+            self.register_user('tester', 'test@gmail.com', 'test1234', 'test1234')
+            response = self.register_user('tester', 'test1@gmail.com', 'test1234', 'test1234')
+            data = json.loads(response.data.decode())
+            self.assertTrue(data['status'] == 'Conflict')
+            self.assertTrue(data['message'] == u'Username already exists! Kindly choose another.')
+            self.assertEqual(response.status_code, 409)
 
-            # Test user login
-            response4 = self.login_user('test@gmail.com', 'test1234')
-            data4 = json.loads(response4.data.decode())
-            self.assertTrue(data4['status'] == 'OK')
-            self.assertTrue(data4['message'] == 'You have logged in successfully!')
-            self.assertTrue(data4['access_token'])
-            self.assertTrue(response4.content_type == 'application/json')
-            self.assertEqual(response4.status_code, 200)
+    def test_user_login(self):
+        """Test user successful login"""
+        with self.client():
+            self.register_user('tester', 'test@gmail.com', 'test1234', 'test1234')
+            response = self.login_user('test@gmail.com', 'test1234')
+            data = json.loads(response.data.decode())
+            self.assertTrue(data['status'] == 'OK')
+            self.assertTrue(data['message'] == 'You have logged in successfully!')
+            self.assertTrue(data['access_token'])
+            self.assertTrue(response.content_type == 'application/json')
+            self.assertEqual(response.status_code, 200)
 
-            # Test login password is valid
-            response5 = self.login_user('test@gmail.com', 'test')
-            data5 = json.loads(response5.data.decode())
-            self.assertEqual(response5.status_code, 400)
-            self.assertTrue(data5['status'] == 'Bad Request')
-            self.assertTrue(data5['message'] == 'Wrong Password!')
+    def test_invalid_login_password(self):
+        """Test unsuccessful registration due to invalid login password."""
+        with self.client():
+            self.register_user('tester', 'test@gmail.com', 'test1234', 'test1234')
+            response = self.login_user('test@gmail.com', 'test')
+            data = json.loads(response.data.decode())
+            self.assertEqual(response.status_code, 400)
+            self.assertTrue(data['status'] == 'Bad Request')
+            self.assertTrue(data['message'] == 'Wrong Password!')
 
-            # Test missing password
-            response6 = self.login_user('test@gmail.com', '')
-            data6 = json.loads(response6.data.decode())
-            self.assertEqual(response6.status_code, 400)
-            self.assertTrue(response6.content_type == 'application/json')
-            self.assertTrue(data6['status'] == 'Bad Request')
-            self.assertTrue(data6['message'] == 'Your password is missing!')
+    def test_missing_password(self):
+        """Test unsuccessful registration due to missing password"""
+        with self.client():
+            self.register_user('tester', 'test@gmail.com', 'test1234', 'test1234')
+            response = self.login_user('test@gmail.com', '')
+            data = json.loads(response.data.decode())
+            self.assertEqual(response.status_code, 400)
+            self.assertTrue(response.content_type == 'application/json')
+            self.assertTrue(data['status'] == 'Bad Request')
+            self.assertTrue(data['message'] == 'Your password is missing!')
 
-            # Test missing email
-            response7 = self.login_user('', 'test1234')
-            data7 = json.loads(response7.data.decode())
-            self.assertEqual(response7.status_code, 400)
-            self.assertTrue(response7.content_type == 'application/json')
-            self.assertTrue(data7['status'] == 'Bad Request')
-            self.assertTrue(data7['message'] == 'Your email is missing!')
+    def test_missing_email(self):
+        """Test unsuccessful registration due to missing email"""
+        with self.client():
+            self.register_user('tester', 'test@gmail.com', 'test1234', 'test1234')
+            response = self.login_user('', 'test1234')
+            data = json.loads(response.data.decode())
+            self.assertEqual(response.status_code, 400)
+            self.assertTrue(response.content_type == 'application/json')
+            self.assertTrue(data['status'] == 'Bad Request')
+            self.assertTrue(data['message'] == 'Your email is missing!')
 
     def test_user_registration_fails_if_content_type_not_json(self):
         """Test the content type is application/json"""
@@ -141,7 +159,7 @@ class AuthTest(BaseTests):
             self.assertEqual(response.status_code, 400)
 
     def test_user_invalid_username(self):
-        """Test unsuccessful registration due to short password"""
+        """Test unsuccessful registration due to invalid username"""
         with self.client():
             response = self.register_user('1', 'test@gmail.com', 'test123', 'test1234')
             data = json.loads(response.data.decode())
@@ -151,7 +169,7 @@ class AuthTest(BaseTests):
             self.assertEqual(response.status_code, 400)
 
     def test_user_mismatch_password(self):
-        """Test unsuccessful registration due to short password"""
+        """Test unsuccessful registration due to password mismatch"""
         with self.client():
             response = self.register_user('tester7', 'test@gmail.com', 'test1234', 'test4321')
             data = json.loads(response.data.decode())

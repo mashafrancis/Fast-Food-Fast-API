@@ -1,8 +1,6 @@
 import re
-import time
 
 from werkzeug.security import generate_password_hash, check_password_hash
-import app.api.common.responses as Errors
 
 
 class Utils:
@@ -24,7 +22,13 @@ class Utils:
     @staticmethod
     def name_checker(name):
         # name_checker = re.match(r"(?=^.{4,}$)(?=.*[a-z])^[A-Za-z0-9_-]+( +[A-Za-z0-9_-]+)*$", name)
-        name_checker = re.match(r"^[a-zA-Z_ ]+$", name)
+        name_checker = re.match(r"^.{3,}[a-zA-Z_]+$", name)
+        return True if name_checker else False
+
+    @staticmethod
+    def description_checker(name):
+        # name_checker = re.match(r"(?=^.{4,}$)(?=.*[a-z])^[A-Za-z0-9_-]+( +[A-Za-z0-9_-]+)*$", name)
+        name_checker = re.match(r"^.{3,}$", name)
         return True if name_checker else False
 
     @staticmethod
@@ -52,4 +56,13 @@ class Utils:
         """Check url id parameter to be a valid number"""
         url_id_checker = re.match(r"^[1-9][0-9]*$", url_id)
         return True if url_id_checker else False
+
+    @staticmethod
+    def valid_string_inputs(field):
+        return re.match("^[a-zA-Z0-9-\._@ `]+$", field)
+
+    @staticmethod
+    def valid_positive_integers(field):
+        integer_checker = field <= 0
+        return True if integer_checker else False
 

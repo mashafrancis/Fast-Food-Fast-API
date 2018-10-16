@@ -1,8 +1,9 @@
-from flask import Blueprint, request
+from flask import Blueprint, request, make_response, jsonify
 from flask.views import MethodView
 
 from app.api.common.decorators import user_required, admin_required
 from app.api.common.responses import Response
+from app.api.common.utils import Utils
 from app.api.v2.models.meal import Meal
 from app.api.v2.models.order import Orders
 from app.api.v2.models.user import User
@@ -67,13 +68,20 @@ class UserOrdersView(MethodView):
     @user_required
     def post(self, user_id):
         """Endpoint for adding a new order."""
-        data = request.get_json(force=True)
-        meal_id = data['meal_id']
-        quantity = data['quantity']
-
-        meal = Meal.find_by_id(meal_id)
-        ordered_meal = Orders.find_meal_by_its_id(meal_id)
         try:
+            data = request.get_json(force=True)
+            meal_id = data['meal_id']
+            quantity = data['quantity']
+
+            # if not data:
+            #     raise SystemError
+            if Utils.valid_positive_integers(meal_id):
+                raise Error.BadRequest('You cannot add a negative or null meal_id!')
+            if Utils.valid_positive_integers(quantity):
+                raise Error.BadRequest('You cannot add a negative or null quantity!')
+
+            meal = Meal.find_by_id(meal_id)
+            ordered_meal = Orders.find_meal_by_its_id(meal_id)
             if not meal:
                 raise Error.NotFound('Meal not available')
             elif ordered_meal:
@@ -91,10 +99,15 @@ class UserOrdersView(MethodView):
 
             order.save()
             return Response.create_resource('Order has been placed successfully.')
+        except Error.BadRequest as e:
+            return e.message
         except Error.Conflict as e:
             return e.message
         except Error.NotFound as e:
             return e.message
+        except Exception as error:
+            return make_response(jsonify(
+                {"error": "Please provide for all the fields. Missing field: " + str(error)}), 400)
 
     @user_required
     def delete(self, user_id):
